@@ -1,31 +1,7 @@
-cmake_minimum_required(VERSION 3.0.0)
-
-if (NOT CMAKE_VERSION VERSION_LESS "3.1")
-    cmake_policy(SET CMP0054 NEW)
-endif()
-
-add_custom_target(build_all_3rd_party_libs
-    COMMAND ${CMAKE_COMMAND} -E echo "Custom target build_all_3rd_party_libs reached."
-)
-
-# central location for specifying the Cupoch version
-file(STRINGS "src/cupoch/version.txt" CUPOCH_VERSION_READ)
-foreach(ver ${CUPOCH_VERSION_READ})
-  if (ver MATCHES "CUPOCH_VERSION_(MAJOR|MINOR|PATCH|TWEAK) +([^ ]+)$")
-    set(CUPOCH_VERSION_${CMAKE_MATCH_1} "${CMAKE_MATCH_2}" CACHE INTERNAL "")
-  endif()
-endforeach()
-string(CONCAT CUPOCH_VERSION "${CUPOCH_VERSION_MAJOR}"
-                             ".${CUPOCH_VERSION_MINOR}"
-                             ".${CUPOCH_VERSION_PATCH}"
-                             ".${CUPOCH_VERSION_TWEAK}")
+cmake_minimum_required(VERSION 3.18)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+include(set_cupoch_version)
 project(cupoch VERSION ${CUPOCH_VERSION})
-message(STATUS "cupoch ${PROJECT_VERSION}")
-
-# npm version has to be MAJOR.MINOR.PATCH
-string(CONCAT PROJECT_VERSION_THREE_NUMBER "${CUPOCH_VERSION_MAJOR}"
-                                           ".${CUPOCH_VERSION_MINOR}"
-                                           ".${CUPOCH_VERSION_PATCH}")
 
 # PyPI package name controls specifies the repository name on PyPI. The default
 # name is "cupoch". 
@@ -160,6 +136,7 @@ elseif (UNIX)
 endif ()
 
 find_package(CUDA REQUIRED)
+find_package(CUDAToolkit REQUIRED)
 include(${CMAKE_SOURCE_DIR}/cmake/CudaComputeTargetFlags.cmake)
 APPEND_TARGET_ARCH_FLAGS()
 if (NOT cuda_nvcc_target_flags)
@@ -186,13 +163,29 @@ endif ()
 # - Libraries: cupoch/build/3rdparty_install/lib/extern_lib.a
 set(3RDPARTY_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/3rdparty_install")
 
+## conan libraries ##
+if(NOT DEFINED CONAN_CXX_FLAGS)
+    include(cmake/conan_dependencies.cmake)
+    conan_dependencies_file()
+endif()
+
+find_package(Eigen3 REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(dlpack REQUIRED)
+find_package(jsoncpp REQUIRED)
+
+list(APPEND 3RDPARTY_LIBRARIES
+    CUDA::cudart
+    Eigen3::Eigen
+    spdlog::spdlog
+    dlpack::dlpack
+    JsonCpp::JsonCpp
+)
+
 add_subdirectory(third_party)
 
-include_directories(
-    SYSTEM
-    ${3RDPARTY_INCLUDE_DIRS}
-)
+include_directories(SYSTEM ${3RDPARTY_INCLUDE_DIRS})
 
 include_directories(src)
 add_subdirectory(src)
-add_subdirectory(examples)
+#add_subdirectory(examples)

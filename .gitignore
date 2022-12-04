@@ -6,3 +6,5 @@ shader.h
 imgui.ini
 site/*
 __pycache__
+.idea/
+CMakeUserPresets.json
