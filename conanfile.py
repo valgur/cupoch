@@ -39,6 +39,7 @@ class CupochConan(ConanFile):
         self.requires("spdlog/1.8.5", headers=True, libs=True)
         self.requires("dlpack/0.4", headers=True, libs=True)
         self.requires("jsoncpp/1.9.5", headers=True, libs=True)
+        self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
 
     def build_requirements(self):
         pass

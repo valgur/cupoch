@@ -118,13 +118,15 @@ list(APPEND 3RDPARTY_LIBRARIES ${FLANN_LIBRARIES})
 #    list(APPEND GLFW_LIBRARIES    ${OPENGL_gl_LIBRARY})
 #endif ()
 
-## liblzf
-#file(GLOB LIBLZF_SOURCE_FILES "liblzf/*.c")
-#add_library(liblzf ${LIBLZF_SOURCE_FILES})
-#target_include_directories(liblzf PUBLIC liblzf)
-#set(liblzf_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/liblzf)
-#set(liblzf_LIBRARIES liblzf)
-#
+# liblzf
+file(GLOB LIBLZF_SOURCE_FILES "liblzf/*.c")
+add_library(liblzf ${LIBLZF_SOURCE_FILES})
+target_include_directories(liblzf PUBLIC liblzf)
+set(liblzf_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/liblzf)
+set(liblzf_LIBRARIES liblzf)
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${liblzf_INCLUDE_DIRS})
+list(APPEND 3RDPARTY_LIBRARIES ${liblzf_LIBRARIES})
+
 ## tritriintersect
 #set(tomasakeninemoeller_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tomasakeninemoeller")
 #
@@ -179,23 +181,12 @@ set(stdgpu_LIBRARIES stdgpu)
 list(APPEND 3RDPARTY_INCLUDE_DIRS ${stdgpu_INCLUDE_DIRS})
 list(APPEND 3RDPARTY_LIBRARIES ${stdgpu_LIBRARIES})
 
-## tinyobjloader
-#message(STATUS "Building tinyobjloader from source")
-#add_library(tinyobjloader STATIC tinyobjloader/tiny_obj_loader.cc)
-#target_include_directories(tinyobjloader PUBLIC "tinyobjloader/")
-#if (NOT BUILD_SHARED_LIBS)
-#    install(TARGETS tinyobjloader
-#        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-#        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-#        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-#endif()
-#set(tinyobjloader_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyobjloader")
-#set(tinyobjloader_LIBRARIES tinyobjloader)
-#
-## rply
-#add_library(rply rply/rply.c)
-#set(rply_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rply)
-#set(rply_LIBRARIES rply)
+# rply
+add_library(rply rply/rply.c)
+set(rply_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rply)
+set(rply_LIBRARIES rply)
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${rply_INCLUDE_DIRS})
+list(APPEND 3RDPARTY_LIBRARIES ${rply_LIBRARIES})
 
 # rmm
 set(rmm_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rmm/include)
@@ -269,11 +260,10 @@ install(TARGETS
 #        ${glfw_LIBRARIES}
 #        ${JPEG_TURBO_LIBRARIES}
 #        ${PNG_LIBRARIES}
-#        ${liblzf_LIBRARIES}
-#        ${rply_LIBRARIES}
+        ${liblzf_LIBRARIES}
+        ${rply_LIBRARIES}
         ${stdgpu_LIBRARIES}
 #        ${SGM_LIBRARIES}
-#        ${tinyobjloader_LIBRARIES}
 #        ${googletest_LIBRARIES}
 #        ${imgui_LIBRARIES}
 #        ${urdfdom_LIBRARIES}

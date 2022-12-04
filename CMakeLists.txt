@@ -173,6 +173,7 @@ find_package(Eigen3 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(dlpack REQUIRED)
 find_package(jsoncpp REQUIRED)
+find_package(tinyobjloader REQUIRED)
 
 list(APPEND 3RDPARTY_LIBRARIES
     CUDA::cudart
@@ -180,6 +181,7 @@ list(APPEND 3RDPARTY_LIBRARIES
     spdlog::spdlog
     dlpack::dlpack
     JsonCpp::JsonCpp
+    tinyobjloader::tinyobjloader
 )
 
 add_subdirectory(third_party)
