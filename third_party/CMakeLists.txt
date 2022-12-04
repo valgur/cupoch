@@ -127,9 +127,10 @@ set(liblzf_LIBRARIES liblzf)
 list(APPEND 3RDPARTY_INCLUDE_DIRS ${liblzf_INCLUDE_DIRS})
 list(APPEND 3RDPARTY_LIBRARIES ${liblzf_LIBRARIES})
 
-## tritriintersect
-#set(tomasakeninemoeller_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tomasakeninemoeller")
-#
+# tritriintersect
+set(tomasakeninemoeller_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${tomasakeninemoeller_INCLUDE_DIRS})
+
 ## PNG
 #if (BUILD_PNG)
 #    message(STATUS "Building LIBPNG from source (BUILD_PNG=ON)")
@@ -203,13 +204,15 @@ list(APPEND 3RDPARTY_INCLUDE_DIRS ${rmm_INCLUDE_DIRS})
 #    ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 #set(imgui_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 #set(imgui_LIBRARIES imgui)
-#
-## lbvh
-#set(lbvh_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh)
-#
-## lbvh_index
-#set(lbvh_index_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh_index)
-#
+
+# lbvh
+set(lbvh_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh)
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${lbvh_INCLUDE_DIRS})
+
+# lbvh_index
+set(lbvh_index_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh_index)
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${lbvh_index_INCLUDE_DIRS})
+
 ## urdfdom
 #set(CONSOLE_BRIDGE_MAJOR_VERSION 1)
 #set(CONSOLE_BRIDGE_MINOR_VERSION 0)
