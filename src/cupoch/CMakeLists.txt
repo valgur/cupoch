@@ -4,7 +4,7 @@ configure_file("${PROJECT_SOURCE_DIR}/src/cupoch/cupoch_config.h.in"
 add_subdirectory(camera)
 add_subdirectory(collision)
 add_subdirectory(geometry)
-#add_subdirectory(imageproc)
+add_subdirectory(imageproc)
 #add_subdirectory(integration)
 add_subdirectory(io)
 #add_subdirectory(kinematics)
@@ -21,6 +21,7 @@ install(TARGETS
                 ${PROJECT_NAME}_camera
                 ${PROJECT_NAME}_collision
                 ${PROJECT_NAME}_geometry
+                ${PROJECT_NAME}_imageproc
 #                ${PROJECT_NAME}_integration
                 ${PROJECT_NAME}_io
 #                ${PROJECT_NAME}_kinematics

@@ -239,20 +239,22 @@ list(APPEND 3RDPARTY_INCLUDE_DIRS ${lbvh_index_INCLUDE_DIRS})
 #    ${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include/tinyxml
 #    ${CMAKE_CURRENT_BINARY_DIR})
 #set(urdfdom_LIBRARIES urdfdom)
-#
-## libSGM
-#set(libSGM_VERSION_MAJOR 2)
-#set(libSGM_VERSION_MINOR 7)
-#set(libSGM_VERSION_PATCH 0)
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h.in
-#    ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h
-#    )
-#file(GLOB STEREOSRCS "libSGM/src/*.cu" "libSGM/src/*.cpp")
-#cuda_add_library(sgm ${STEREOSRCS})
-#target_include_directories(sgm PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
-#target_link_libraries(sgm ${CUDA_LIBRARIES})
-#set(SGM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
-#set(SGM_LIBRARIES sgm)
+
+# libSGM
+set(libSGM_VERSION_MAJOR 2)
+set(libSGM_VERSION_MINOR 7)
+set(libSGM_VERSION_PATCH 0)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h
+    )
+file(GLOB STEREOSRCS "libSGM/src/*.cu" "libSGM/src/*.cpp")
+cuda_add_library(sgm ${STEREOSRCS})
+target_include_directories(sgm PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
+target_link_libraries(sgm ${CUDA_LIBRARIES})
+set(SGM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
+set(SGM_LIBRARIES sgm)
+list(APPEND 3RDPARTY_INCLUDE_DIRS ${SGM_INCLUDE_DIRS})
+list(APPEND 3RDPARTY_LIBRARIES ${SGM_LIBRARIES})
 
 set(3RDPARTY_INCLUDE_DIRS ${3RDPARTY_INCLUDE_DIRS} PARENT_SCOPE)
 set(3RDPARTY_LIBRARIES ${3RDPARTY_LIBRARIES} PARENT_SCOPE)
@@ -266,7 +268,7 @@ install(TARGETS
         ${liblzf_LIBRARIES}
         ${rply_LIBRARIES}
         ${stdgpu_LIBRARIES}
-#        ${SGM_LIBRARIES}
+        ${SGM_LIBRARIES}
 #        ${googletest_LIBRARIES}
 #        ${imgui_LIBRARIES}
 #        ${urdfdom_LIBRARIES}
@@ -279,6 +281,6 @@ install(TARGETS
 install(DIRECTORY
         ${rmm_INCLUDE_DIRS}
         ${stdgpu_INCLUDE_DIRS}
-#        ${SGM_INCLUDE_DIRS}
+        ${SGM_INCLUDE_DIRS}
     DESTINATION ${CUPOCH_INSTALL_INCLUDE_DIR}/../
 )
