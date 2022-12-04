@@ -6,12 +6,12 @@ add_library(${PACKAGE_NAME} SHARED
     ${PY_ALL_SOURCE_FILES}
 )
 
-cuda_add_library(cupoch_wrapper cupoch_pybind/device_vector_wrapper.cu
+add_library(cupoch_wrapper cupoch_pybind/device_vector_wrapper.cu
     cupoch_pybind/device_map_wrapper.cu)
 target_include_directories(cupoch_wrapper PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(cupoch_wrapper cupoch_geometry)
+target_link_libraries(cupoch_wrapper PRIVATE cupoch_geometry)
 
 target_include_directories(${PACKAGE_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -27,7 +27,7 @@ target_link_libraries(${PACKAGE_NAME} PRIVATE cupoch_registration
                       cupoch_collision cupoch_integration
                       cupoch_imageproc cupoch_geometry
                       cupoch_utility cupoch_wrapper
-                      ${3RDPARTY_LIBRARIES} ${CUDA_LIBRARIES})
+                      CUDA::cudart)
 if (WIN32)
     target_link_libraries(${PACKAGE_NAME} PRIVATE ${PYTHON_LIBRARIES})
 endif ()

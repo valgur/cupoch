@@ -28,7 +28,7 @@
 #include "cupoch/utility/filesystem.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
+#include <tiny_obj_loader.h>
 
 namespace cupoch {
 namespace io {

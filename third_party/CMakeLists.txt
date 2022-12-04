@@ -1,9 +1,4 @@
 #find_package(PkgConfig QUIET)
-#find_package(pybind11  QUIET)
-#find_package(OpenGL    QUIET)
-#
-#include(GenerateExportHeader)
-#
 #if (PKGCONFIG_FOUND)
 #    pkg_search_module(EIGEN3          eigen3>=3.2.7   QUIET)
 #    pkg_search_module(GLFW            glfw3           QUIET)
@@ -12,162 +7,32 @@
 #    pkg_search_module(PNG             libpng>=1.6.0   QUIET)
 #    pkg_search_module(JPEG_TURBO      libturbojpeg    QUIET)
 #endif (PKGCONFIG_FOUND)
-#
-#macro(INSTALL_HEADERS source)
-#    install(DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/${source}"
-#        DESTINATION "${CMAKE_INSTALL_PREFIX}/include/${CMAKE_PROJECT_NAME}/3rdparty"
-#        PATTERN     "*.c"           EXCLUDE
-#        PATTERN     "*.cmake"       EXCLUDE
-#        PATTERN     "*.cpp"         EXCLUDE
-#        PATTERN     "*.in"          EXCLUDE
-#        PATTERN     "*.m"           EXCLUDE
-#        PATTERN     "*.txt"         EXCLUDE
-#        PATTERN     ".gitignore"    EXCLUDE)
-#endmacro()
-#
-#if (BUILD_PYBIND11)
-#    add_subdirectory(pybind11)
-#endif ()
-#
-#if (BUILD_UNIT_TESTS)
-#    message(STATUS "Building googletest from source")
-#    include_directories("googletest/googletest/include")
-#    include_directories("googletest/googletest/")
-#    set(googletest_INCLUDE_DIRS
-#        ${CMAKE_CURRENT_SOURCE_DIR}/googletest/googletest/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/googletest/googletest/
-#        ${CMAKE_CURRENT_SOURCE_DIR}/googletest/googlemock/include
-#        ${CMAKE_CURRENT_SOURCE_DIR}/googletest/googlemock/)
-#    set(googletest_SOURCE
-#        googletest/googletest/src/gtest-all.cc
-#        googletest/googlemock/src/gmock-all.cc)
-#    include_directories(${googletest_INCLUDE_DIRS})
-#    add_library(googletest STATIC ${googletest_SOURCE})
-#    if (NOT BUILD_SHARED_LIBS)
-#        install(TARGETS googletest
-#            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-#            LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-#            ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-#    endif()
-#    set(googletest_LIBRARIES googletest)
-#endif()
 
 # flann
-set(flann_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE CU_SOURCES flann/*.cu)
-cuda_add_library(flann_cuda_s STATIC ${CU_SOURCES})
-target_include_directories(flann_cuda_s PRIVATE ${flann_INCLUDE_DIRS} rmm/include)
-target_compile_definitions(flann_cuda_s PRIVATE -DFLANN_USE_CUDA)
-target_link_libraries(flann_cuda_s spdlog::spdlog)
-set(FLANN_LIBRARIES flann_cuda_s)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${flann_INCLUDE_DIRS})
-list(APPEND 3RDPARTY_LIBRARIES ${FLANN_LIBRARIES})
-
-
-## GLEW
-#if (BUILD_GLEW)
-#    message(STATUS "Building GLEW from source (BUILD_GLEW=ON)")
-#elseif (GLEW_FOUND)
-#    message(STATUS "Using installed GLEW ${GLEW_VERSION}")
-#else ()
-#    message(STATUS "Unable to find GLEW installed in the system")
-#    message(STATUS "Building GLEW from source")
-#    set(BUILD_GLEW ON)
-#endif ()
-#
-#if (BUILD_GLEW)
-#    add_subdirectory(glew)
-#    INSTALL_HEADERS(glew)
-#endif ()
-#
-## GLFW
-#if (BUILD_GLFW)
-#    message(STATUS "Building GLFW from source (BUILD_GLFW=ON)")
-#elseif (GLFW_FOUND AND OPENGL_FOUND)
-#    message(STATUS "Using installed GLFW ${GLFW_VERSION}")
-#    if (APPLE)
-#        find_library(COCOA_FRAMEWORK Cocoa)
-#        find_library(IOKIT_FRAMEWORK IOKit)
-#        find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
-#        find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
-#        mark_as_advanced(COCOA_FRAMEWORK
-#            IOKIT_FRAMEWORK
-#            CORE_FOUNDATION_FRAMEWORK
-#            CORE_VIDEO_FRAMEWORK)
-#        list(APPEND GLFW_LIBRARIES "${COCOA_FRAMEWORK}"
-#            "${OPENGL_gl_LIBRARY}"
-#            "${IOKIT_FRAMEWORK}"
-#            "${CORE_FOUNDATION_FRAMEWORK}"
-#            "${CORE_VIDEO_FRAMEWORK}")
-#    else ()
-#        list(APPEND GLFW_INCLUDE_DIRS ${OPENGL_INCLUDE_DIR})
-#        list(APPEND GLFW_LIBRARIES    ${OPENGL_gl_LIBRARY})
-#    endif ()
-#else ()
-#    message(STATUS "Unable to find GLFW installed in the system")
-#    message(STATUS "Building GLFW from source")
-#    set(BUILD_GLFW ON)
-#    # Notify PARENT_SCOPE that GLFW was built, to deal with glfw(3) naming issue
-#    set(BUILD_GLFW ON PARENT_SCOPE)
-#endif ()
-#
-#if (BUILD_GLFW)
-#    add_subdirectory(GLFW)
-#    INSTALL_HEADERS(GLFW)
-#    list(APPEND GLFW_INCLUDE_DIRS ${OPENGL_INCLUDE_DIR})
-#    list(APPEND GLFW_LIBRARIES    ${OPENGL_gl_LIBRARY})
-#endif ()
+add_library(flann_cuda_s STATIC ${CU_SOURCES})
+add_library(flann::flann_cuda_s ALIAS flann_cuda_s)
+target_include_directories(flann_cuda_s PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_definitions(flann_cuda_s PUBLIC FLANN_USE_CUDA)
+target_link_libraries(flann_cuda_s PRIVATE spdlog::spdlog rmm::rmm)
+list(APPEND 3RDPARTY_LIBRARIES flann_cuda_s)
 
 # liblzf
+enable_language(C)
 file(GLOB LIBLZF_SOURCE_FILES "liblzf/*.c")
 add_library(liblzf ${LIBLZF_SOURCE_FILES})
-target_include_directories(liblzf PUBLIC liblzf)
-set(liblzf_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/liblzf)
-set(liblzf_LIBRARIES liblzf)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${liblzf_INCLUDE_DIRS})
-list(APPEND 3RDPARTY_LIBRARIES ${liblzf_LIBRARIES})
+add_library(liblzf::liblzf ALIAS liblzf)
+target_include_directories(liblzf PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/liblzf>
+    $<INSTALL_INTERFACE:liblzf>)
+set_target_properties(liblzf PROPERTIES LINKER_LANGUAGE C)
+list(APPEND 3RDPARTY_LIBRARIES liblzf)
 
 # tritriintersect
-set(tomasakeninemoeller_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${tomasakeninemoeller_INCLUDE_DIRS})
-
-## PNG
-#if (BUILD_PNG)
-#    message(STATUS "Building LIBPNG from source (BUILD_PNG=ON)")
-#elseif (PNG_FOUND)
-#    message(STATUS "Using installed LIBPNG ${PNG_VERSION}")
-#else ()
-#    message(STATUS "Unable to find libpng installed in the system")
-#    message(STATUS "Building libpng from source")
-#    set(BUILD_PNG on)
-#endif ()
-#
-#if (BUILD_PNG)
-#    add_subdirectory(zlib)
-#    add_subdirectory(libpng)
-#    list(APPEND PNG_LIBRARIES zlib)
-#endif ()
-#
-## JPEG
-#if (BUILD_JPEG)
-#    message(STATUS "Building libjpeg-turbo from source (BUILD_JPEG=ON)")
-#elseif (JPEG_TURBO_FOUND)
-#    message(STATUS "Using installed libjpeg-turbo ${JPEG_TUROB_VERSION}")
-#    message(STATUS ${JPEG_TURBO_INCLUDE_DIRS})
-#    message(STATUS ${JPEG_TURBO_LIBRARIES})
-#else ()
-#    message(STATUS "Unable to find libjpeg-turbo installed in the system")
-#    message(STATUS "Building libjpeg-turbo from source")
-#    set(BUILD_JPEG ON)
-#endif ()
-#
-#if (BUILD_JPEG)
-#    message(STATUS "Building libjpeg-turbo from source")
-#    include(libjpeg-turbo/libjpeg-turbo.cmake)
-#    set(JPEG_TURBO_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo/libjpeg-turbo
-#        ${CMAKE_CURRENT_BINARY_DIR}/turbojpeg/src/ext_turbojpeg-build)
-#    set(JPEG_TURBO_LIBRARIES turbojpeg)
-#endif()
+add_library(tomasakeninemoeller INTERFACE)
+add_library(tomasakeninemoeller::tritriintersect ALIAS tomasakeninemoeller)
+target_include_directories(tomasakeninemoeller INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+list(APPEND 3RDPARTY_LIBRARIES tomasakeninemoeller)
 
 # stdgpu
 set(STDGPU_BUILD_EXAMPLES OFF CACHE INTERNAL "")
@@ -175,70 +40,75 @@ set(STDGPU_BUILD_TESTS OFF CACHE INTERNAL "")
 set(STDGPU_BUILD_BENCHMARKS OFF CACHE INTERNAL "")
 set(STDGPU_SETUP_COMPILER_FLAGS OFF CACHE INTERNAL "")
 add_subdirectory(stdgpu)
-target_compile_options(stdgpu PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fPIC>)
-target_compile_options(stdgpu PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--compiler-options -fPIC>)
-set(stdgpu_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src ${CMAKE_CURRENT_BINARY_DIR}/stdgpu/src/stdgpu/include)
-set(stdgpu_LIBRARIES stdgpu)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${stdgpu_INCLUDE_DIRS})
-list(APPEND 3RDPARTY_LIBRARIES ${stdgpu_LIBRARIES})
+set_target_properties(stdgpu PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(stdgpu INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src>
+    $<INSTALL_INTERFACE:stdgpu/src>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/stdgpu/src/stdgpu/include>
+    $<INSTALL_INTERFACE:stdgpu/src/stdgpu/include>)
+list(APPEND 3RDPARTY_LIBRARIES stdgpu)
 
 # rply
+enable_language(C)
 add_library(rply rply/rply.c)
-set(rply_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rply)
-set(rply_LIBRARIES rply)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${rply_INCLUDE_DIRS})
-list(APPEND 3RDPARTY_LIBRARIES ${rply_LIBRARIES})
+add_library(rply::rply ALIAS rply)
+set_target_properties(rply PROPERTIES LINKER_LANGUAGE C)
+target_include_directories(rply INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rply>
+    $<INSTALL_INTERFACE:rply>)
+list(APPEND 3RDPARTY_LIBRARIES rply)
 
 # rmm
-set(rmm_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/rmm/include)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${rmm_INCLUDE_DIRS})
-
-## imgui
-#add_library(imgui STATIC imgui/imgui.cpp
-#    imgui/imgui_draw.cpp
-#    imgui/imgui_tables.cpp
-#    imgui/imgui_widgets.cpp
-#    imgui/backends/imgui_impl_glfw.cpp
-#    imgui/backends/imgui_impl_opengl3.cpp)
-#target_include_directories(imgui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/imgui
-#    ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-#set(imgui_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
-#set(imgui_LIBRARIES imgui)
+add_library(rmm INTERFACE)
+add_library(rmm::rmm ALIAS rmm)
+target_include_directories(rmm INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rmm/include>
+    $<INSTALL_INTERFACE:rmm/include>)
+target_link_libraries(rmm INTERFACE spdlog::spdlog)
+target_compile_features(rmm INTERFACE cxx_std_17 $<BUILD_INTERFACE:cuda_std_17>)
+list(APPEND 3RDPARTY_LIBRARIES rmm)
 
 # lbvh
-set(lbvh_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${lbvh_INCLUDE_DIRS})
+add_library(lbvh INTERFACE)
+add_library(lbvh::lbvh ALIAS lbvh)
+target_include_directories(lbvh INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lbvh>
+    $<INSTALL_INTERFACE:lbvh>)
+list(APPEND 3RDPARTY_LIBRARIES lbvh)
 
 # lbvh_index
-set(lbvh_index_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lbvh_index)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${lbvh_index_INCLUDE_DIRS})
+add_library(lbvh_index INTERFACE)
+add_library(lbvh::lbvh_index ALIAS lbvh_index)
+target_include_directories(lbvh_index INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lbvh_index>
+    $<INSTALL_INTERFACE:lbvh_index>)
+list(APPEND 3RDPARTY_LIBRARIES lbvh_index)
 
 ## urdfdom
-#set(CONSOLE_BRIDGE_MAJOR_VERSION 1)
-#set(CONSOLE_BRIDGE_MINOR_VERSION 0)
-#set(CONSOLE_BRIDGE_PATCH_VERSION 1)
-#add_library(console_bridge urdfdom/urdf_parser/src/console.cpp)
-#set_target_properties(console_bridge PROPERTIES SOVERSION
-#    ${CONSOLE_BRIDGE_MAJOR_VERSION}.${CONSOLE_BRIDGE_MINOR_VERSION})
-#target_include_directories(console_bridge PUBLIC
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-#    $<INSTALL_INTERFACE:include>)
-#generate_export_header(console_bridge
-#    EXPORT_MACRO_NAME CONSOLE_BRIDGE_DLLAPI)
-#
-#file(GLOB_RECURSE URDFDOM_SOURCES urdfdom/urdf_parser/src/*.cpp)
-#list(REMOVE_ITEM URDFDOM_SOURCES "urdfdom/urdf_parser/src/console.cpp")
-#add_library(urdfdom STATIC ${URDFDOM_SOURCES})
-#target_include_directories(urdfdom PRIVATE
-#    ${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include
-#    ${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include/tinyxml)
-#target_link_libraries(urdfdom console_bridge)
-#set(urdfdom_INCLUDE_DIR
-#    ${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include
-#    ${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include/tinyxml
-#    ${CMAKE_CURRENT_BINARY_DIR})
-#set(urdfdom_LIBRARIES urdfdom)
+set(CONSOLE_BRIDGE_MAJOR_VERSION 1)
+set(CONSOLE_BRIDGE_MINOR_VERSION 0)
+set(CONSOLE_BRIDGE_PATCH_VERSION 1)
+add_library(console_bridge urdfdom/urdf_parser/src/console.cpp)
+set_target_properties(console_bridge PROPERTIES SOVERSION
+    ${CONSOLE_BRIDGE_MAJOR_VERSION}.${CONSOLE_BRIDGE_MINOR_VERSION})
+target_include_directories(console_bridge PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>)
+include(GenerateExportHeader)
+generate_export_header(console_bridge EXPORT_MACRO_NAME CONSOLE_BRIDGE_DLLAPI)
+
+file(GLOB_RECURSE URDFDOM_SOURCES urdfdom/urdf_parser/src/*.cpp)
+list(REMOVE_ITEM URDFDOM_SOURCES "urdfdom/urdf_parser/src/console.cpp")
+add_library(urdfdom STATIC ${URDFDOM_SOURCES})
+add_library(urdfdom::urdfdom ALIAS urdfdom)
+target_include_directories(urdfdom PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include/tinyxml>
+    $<INSTALL_INTERFACE:urdfdom/urdf_parser/include/tinyxml>
+    $<INSTALL_INTERFACE:urdfdom/urdf_parser/include>)
+target_link_libraries(urdfdom console_bridge)
+set(urdfdom_LIBRARIES urdfdom)
 
 # libSGM
 set(libSGM_VERSION_MAJOR 2)
@@ -247,14 +117,16 @@ set(libSGM_VERSION_PATCH 0)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h.in
     ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include/libsgm_config.h
     )
-file(GLOB STEREOSRCS "libSGM/src/*.cu" "libSGM/src/*.cpp")
-cuda_add_library(sgm ${STEREOSRCS})
-target_include_directories(sgm PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
-target_link_libraries(sgm ${CUDA_LIBRARIES})
-set(SGM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
-set(SGM_LIBRARIES sgm)
-list(APPEND 3RDPARTY_INCLUDE_DIRS ${SGM_INCLUDE_DIRS})
-list(APPEND 3RDPARTY_LIBRARIES ${SGM_LIBRARIES})
+file(GLOB SGM_SRCS "libSGM/src/*.cu" "libSGM/src/*.cpp")
+add_library(sgm ${SGM_SRCS})
+add_library(sgm::sgm ALIAS sgm)
+target_include_directories(sgm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include)
+target_include_directories(sgm PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include>
+    $<INSTALL_INTERFACE:libSGM/include>)
+target_link_libraries(sgm PUBLIC CUDA::cudart)
+list(APPEND 3RDPARTY_LIBRARIES sgm)
+
 
 set(3RDPARTY_INCLUDE_DIRS ${3RDPARTY_INCLUDE_DIRS} PARENT_SCOPE)
 set(3RDPARTY_LIBRARIES ${3RDPARTY_LIBRARIES} PARENT_SCOPE)
@@ -278,9 +150,9 @@ install(TARGETS
     ARCHIVE DESTINATION ${CUPOCH_INSTALL_LIB_DIR}
 )
 
-install(DIRECTORY
-        ${rmm_INCLUDE_DIRS}
-        ${stdgpu_INCLUDE_DIRS}
-        ${SGM_INCLUDE_DIRS}
-    DESTINATION ${CUPOCH_INSTALL_INCLUDE_DIR}/../
-)
+#install(DIRECTORY
+#        ${rmm_INCLUDE_DIRS}
+#        ${stdgpu_INCLUDE_DIRS}
+#        ${SGM_INCLUDE_DIRS}
+#    DESTINATION ${CUPOCH_INSTALL_INCLUDE_DIR}/../
+#)

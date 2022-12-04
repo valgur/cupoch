@@ -40,6 +40,11 @@ class CupochConan(ConanFile):
         self.requires("dlpack/0.4", headers=True, libs=True)
         self.requires("jsoncpp/1.9.5", headers=True, libs=True)
         self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
+        self.requires("libpng/1.6.39", headers=True, libs=True)
+        self.requires("libjpeg-turbo/2.1.4", headers=True, libs=True)
+        self.requires("glew/2.2.0", headers=True, libs=True)
+        self.requires("glfw/3.3.8", headers=True, libs=True)
+        self.requires("imgui/1.89.1", headers=True, libs=True)
 
     def build_requirements(self):
         pass

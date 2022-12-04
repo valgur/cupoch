@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(set_cupoch_version)
-project(cupoch VERSION ${CUPOCH_VERSION})
+project(cupoch VERSION ${CUPOCH_VERSION} LANGUAGES CXX CUDA)
 
 # PyPI package name controls specifies the repository name on PyPI. The default
 # name is "cupoch". 
@@ -135,25 +135,28 @@ elseif (UNIX)
     message(STATUS "Compiling on Unix")
 endif ()
 
-find_package(CUDA REQUIRED)
 find_package(CUDAToolkit REQUIRED)
-include(${CMAKE_SOURCE_DIR}/cmake/CudaComputeTargetFlags.cmake)
-APPEND_TARGET_ARCH_FLAGS()
-if (NOT cuda_nvcc_target_flags)
-  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -arch=sm_52 -std=c++17)
-endif ()
-include_directories(${CUDA_INCLUDE_DIRS})
-set(CMAKE_CUDA_COMPILE_FEATURES cuda_std_14)
-set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}
-    --expt-relaxed-constexpr
-    --expt-extended-lambda
-    --default-stream per-thread
-    --use_fast_math
-    -Xcudafe "--diag_suppress=integer_sign_change"
-    -Xcudafe "--diag_suppress=partial_override"
-    -Xcudafe "--diag_suppress=virtual_function_decl_hidden")
+add_library(cupoch_flags INTERFACE)
+set(CMAKE_CUDA_ARCHITECTURES 52)
+target_compile_features(cupoch_flags INTERFACE cxx_std_14 $<BUILD_INTERFACE:cuda_std_14>)
+target_compile_options(cupoch_flags INTERFACE
+    "$<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:--use_fast_math>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=integer_sign_change>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=partial_override>"
+    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=virtual_function_decl_hidden>"
+)
+target_link_libraries(cupoch_flags INTERFACE
+    CUDA::cudart
+#    CUDA::cublas
+#    CUDA::cudnn
+#    CUDA::cufft
+#    CUDA::curand
+)
 if (USE_RMM)
-    add_definitions(-DUSE_RMM)
+    target_compile_definitions(cupoch_flags INTERFACE USE_RMM)
 endif ()
 
 # 3rd-party projects that are added with external_project_add will be installed
@@ -165,8 +168,8 @@ set(3RDPARTY_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/3rdparty_install")
 
 ## conan libraries ##
 if(NOT DEFINED CONAN_CXX_FLAGS)
-    include(cmake/conan_dependencies.cmake)
-    conan_dependencies_file()
+    include(conan_dependencies)
+    conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
 endif()
 
 find_package(Eigen3 REQUIRED)
@@ -174,19 +177,15 @@ find_package(spdlog REQUIRED)
 find_package(dlpack REQUIRED)
 find_package(jsoncpp REQUIRED)
 find_package(tinyobjloader REQUIRED)
-
-list(APPEND 3RDPARTY_LIBRARIES
-    CUDA::cudart
-    Eigen3::Eigen
-    spdlog::spdlog
-    dlpack::dlpack
-    JsonCpp::JsonCpp
-    tinyobjloader::tinyobjloader
-)
+find_package(PNG REQUIRED)
+find_package(libjpeg-turbo REQUIRED)
+#find_package(pybind11  QUIET)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(imgui REQUIRED)
 
 add_subdirectory(third_party)
-
-include_directories(SYSTEM ${3RDPARTY_INCLUDE_DIRS})
 
 include_directories(src)
 add_subdirectory(src)

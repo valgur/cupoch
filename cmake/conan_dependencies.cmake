@@ -1,4 +1,4 @@
-function(conan_dependencies_file)
+function(conan_dependencies_file conanfile_path)
   if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conan.cmake")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
       "${CMAKE_CURRENT_BINARY_DIR}/conan.cmake" TLS_VERIFY ON)
@@ -17,7 +17,7 @@ function(conan_dependencies_file)
   message(STATUS "Conan autodetected settings: ${conan_settings}")
 
   conan_cmake_install(
-    PATH_OR_REFERENCE ${CMAKE_CURRENT_SOURCE_DIR}
+    PATH_OR_REFERENCE ${conanfile_path}
     OUTPUT_FOLDER ${CMAKE_CURRENT_BINARY_DIR}
     PROFILE_BUILD default
     PROFILE_HOST default
