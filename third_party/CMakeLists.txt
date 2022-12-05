@@ -90,7 +90,7 @@ file(GLOB_RECURSE URDFDOM_SOURCES urdfdom/urdf_parser/src/*.cpp)
 list(REMOVE_ITEM URDFDOM_SOURCES "urdfdom/urdf_parser/src/console.cpp")
 add_library(urdfdom STATIC ${URDFDOM_SOURCES})
 add_library(urdfdom::urdfdom ALIAS urdfdom)
-target_include_directories(urdfdom PRIVATE
+target_include_directories(urdfdom PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include/tinyxml>
     $<INSTALL_INTERFACE:urdfdom/urdf_parser/include/tinyxml>
