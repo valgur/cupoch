@@ -137,17 +137,12 @@ target_compile_options(cupoch_flags INTERFACE
     "$<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>"
     "$<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>"
     "$<$<COMPILE_LANGUAGE:CUDA>:--use_fast_math>"
+    "$<$<BOOL:UNIX>:$<$<COMPILE_LANGUAGE:CUDA>:--compiler-options=-fPIC>>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=integer_sign_change>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=partial_override>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=virtual_function_decl_hidden>"
 )
-target_link_libraries(cupoch_flags INTERFACE
-    CUDA::cudart
-#    CUDA::cublas
-#    CUDA::cudnn
-#    CUDA::cufft
-#    CUDA::curand
-)
+target_link_libraries(cupoch_flags INTERFACE CUDA::cudart)
 if (USE_RMM)
     target_compile_definitions(cupoch_flags INTERFACE USE_RMM)
 endif ()

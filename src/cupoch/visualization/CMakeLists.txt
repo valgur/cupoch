@@ -34,7 +34,7 @@ target_link_libraries(cupoch_visualization
         cupoch_utility
         Eigen3::Eigen
         GLEW::GLEW
-        glfw3
+        glfw
     PRIVATE
         cupoch_io
         imgui::imgui

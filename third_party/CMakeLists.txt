@@ -14,7 +14,7 @@ add_library(flann_cuda_s STATIC ${CU_SOURCES})
 add_library(flann::flann_cuda_s ALIAS flann_cuda_s)
 target_include_directories(flann_cuda_s PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_definitions(flann_cuda_s PUBLIC FLANN_USE_CUDA)
-target_link_libraries(flann_cuda_s PRIVATE spdlog::spdlog rmm::rmm)
+target_link_libraries(flann_cuda_s PRIVATE cupoch_flags CUDA::cudart spdlog::spdlog rmm::rmm)
 list(APPEND 3RDPARTY_LIBRARIES flann_cuda_s)
 
 # liblzf
@@ -43,8 +43,8 @@ add_subdirectory(stdgpu)
 set_target_properties(stdgpu PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(stdgpu INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src>
-    $<INSTALL_INTERFACE:stdgpu/src>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/stdgpu/src/stdgpu/include>
+    $<INSTALL_INTERFACE:stdgpu/src>
     $<INSTALL_INTERFACE:stdgpu/src/stdgpu/include>)
 list(APPEND 3RDPARTY_LIBRARIES stdgpu)
 
@@ -124,7 +124,7 @@ target_include_directories(sgm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include
 target_include_directories(sgm PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include>
     $<INSTALL_INTERFACE:libSGM/include>)
-target_link_libraries(sgm PUBLIC CUDA::cudart)
+target_link_libraries(sgm PUBLIC cupoch_flags CUDA::cudart)
 list(APPEND 3RDPARTY_LIBRARIES sgm)
 
 

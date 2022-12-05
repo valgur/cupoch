@@ -2,6 +2,7 @@ import os
 
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.files import copy
 
 # for self.info.clear()
 required_conan_version = ">=1.50.0"
@@ -54,13 +55,24 @@ class CupochConan(ConanFile):
         cmake_layout(self)
 
     def generate(self):
+        imgui_paths = self.dependencies["imgui/1.89.1"].cpp_info.srcdirs
+        backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
+        output_dir = os.path.join(self.source_folder, "src/cupoch/visualization/visualizer/imgui/backends")
+        for backend_file in [
+            "imgui_impl_glfw.h",
+            "imgui_impl_glfw.cpp",
+            "imgui_impl_opengl3.h",
+            "imgui_impl_opengl3_loader.h",
+            "imgui_impl_opengl3.cpp",
+        ]:
+            copy(self, backend_file, backends_dir, output_dir)
+
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
         tc.cache_variables["BUILD_TESTING"] = self._with_unit_tests
-        # tc.preprocessor_definitions["FLANN_USE_CUDA"] = 1
-        # tc.preprocessor_definitions["SPDLOG_FMT_EXTERNAL"] = 1
         tc.generate()
+
         CMakeDeps(self).generate()
 
     def build(self):

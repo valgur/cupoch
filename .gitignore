@@ -4,6 +4,7 @@ install*
 cupoch_config.h
 shader.h
 imgui.ini
+/src/cupoch/visualization/visualizer/imgui/
 site/*
 __pycache__
 .idea/
