@@ -47,7 +47,8 @@ class CupochConan(ConanFile):
         self.requires("imgui/1.89.1", headers=True, libs=True)
 
     def build_requirements(self):
-        pass
+        self.test_requires("gtest/1.12.1")
+        self.test_requires("pybind11/2.10.1")
 
     def layout(self):
         cmake_layout(self)

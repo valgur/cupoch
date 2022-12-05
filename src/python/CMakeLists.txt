@@ -5,6 +5,7 @@ file(GLOB_RECURSE PY_ALL_SOURCE_FILES "cupoch_pybind/*.cpp")
 add_library(${PACKAGE_NAME} SHARED
     ${PY_ALL_SOURCE_FILES}
 )
+target_link_libraries(${PACKAGE_NAME} PUBLIC pybind11::pybind11)
 
 add_library(cupoch_wrapper cupoch_pybind/device_vector_wrapper.cu
     cupoch_pybind/device_map_wrapper.cu)
