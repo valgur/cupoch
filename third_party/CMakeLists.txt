@@ -1,13 +1,3 @@
-#find_package(PkgConfig QUIET)
-#if (PKGCONFIG_FOUND)
-#    pkg_search_module(EIGEN3          eigen3>=3.2.7   QUIET)
-#    pkg_search_module(GLFW            glfw3           QUIET)
-#    pkg_search_module(GLEW            glew            QUIET)
-#    pkg_search_module(JSONCPP         jsoncpp>=1.7.0  QUIET)
-#    pkg_search_module(PNG             libpng>=1.6.0   QUIET)
-#    pkg_search_module(JPEG_TURBO      libturbojpeg    QUIET)
-#endif (PKGCONFIG_FOUND)
-
 # flann
 file(GLOB_RECURSE CU_SOURCES flann/*.cu)
 add_library(flann_cuda_s STATIC ${CU_SOURCES})
@@ -15,7 +5,6 @@ add_library(flann::flann_cuda_s ALIAS flann_cuda_s)
 target_include_directories(flann_cuda_s PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_compile_definitions(flann_cuda_s PUBLIC FLANN_USE_CUDA)
 target_link_libraries(flann_cuda_s PRIVATE cupoch_flags CUDA::cudart spdlog::spdlog rmm::rmm)
-list(APPEND 3RDPARTY_LIBRARIES flann_cuda_s)
 
 # liblzf
 enable_language(C)
@@ -26,13 +15,11 @@ target_include_directories(liblzf PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/liblzf>
     $<INSTALL_INTERFACE:liblzf>)
 set_target_properties(liblzf PROPERTIES LINKER_LANGUAGE C)
-list(APPEND 3RDPARTY_LIBRARIES liblzf)
 
 # tritriintersect
 add_library(tomasakeninemoeller INTERFACE)
 add_library(tomasakeninemoeller::tritriintersect ALIAS tomasakeninemoeller)
 target_include_directories(tomasakeninemoeller INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-list(APPEND 3RDPARTY_LIBRARIES tomasakeninemoeller)
 
 # stdgpu
 set(STDGPU_BUILD_EXAMPLES OFF CACHE INTERNAL "")
@@ -46,7 +33,6 @@ target_include_directories(stdgpu INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/stdgpu/src/stdgpu/include>
     $<INSTALL_INTERFACE:stdgpu/src>
     $<INSTALL_INTERFACE:stdgpu/src/stdgpu/include>)
-list(APPEND 3RDPARTY_LIBRARIES stdgpu)
 
 # rply
 enable_language(C)
@@ -56,7 +42,6 @@ set_target_properties(rply PROPERTIES LINKER_LANGUAGE C)
 target_include_directories(rply INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rply>
     $<INSTALL_INTERFACE:rply>)
-list(APPEND 3RDPARTY_LIBRARIES rply)
 
 # rmm
 add_library(rmm INTERFACE)
@@ -66,7 +51,6 @@ target_include_directories(rmm INTERFACE
     $<INSTALL_INTERFACE:rmm/include>)
 target_link_libraries(rmm INTERFACE spdlog::spdlog)
 target_compile_features(rmm INTERFACE cxx_std_17 $<BUILD_INTERFACE:cuda_std_17>)
-list(APPEND 3RDPARTY_LIBRARIES rmm)
 
 # lbvh
 add_library(lbvh INTERFACE)
@@ -74,7 +58,6 @@ add_library(lbvh::lbvh ALIAS lbvh)
 target_include_directories(lbvh INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lbvh>
     $<INSTALL_INTERFACE:lbvh>)
-list(APPEND 3RDPARTY_LIBRARIES lbvh)
 
 # lbvh_index
 add_library(lbvh_index INTERFACE)
@@ -82,7 +65,6 @@ add_library(lbvh::lbvh_index ALIAS lbvh_index)
 target_include_directories(lbvh_index INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lbvh_index>
     $<INSTALL_INTERFACE:lbvh_index>)
-list(APPEND 3RDPARTY_LIBRARIES lbvh_index)
 
 ## urdfdom
 set(CONSOLE_BRIDGE_MAJOR_VERSION 1)
@@ -108,7 +90,6 @@ target_include_directories(urdfdom PRIVATE
     $<INSTALL_INTERFACE:urdfdom/urdf_parser/include/tinyxml>
     $<INSTALL_INTERFACE:urdfdom/urdf_parser/include>)
 target_link_libraries(urdfdom console_bridge)
-set(urdfdom_LIBRARIES urdfdom)
 
 # libSGM
 set(libSGM_VERSION_MAJOR 2)
@@ -125,30 +106,26 @@ target_include_directories(sgm PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libSGM/include>
     $<INSTALL_INTERFACE:libSGM/include>)
 target_link_libraries(sgm PUBLIC cupoch_flags CUDA::cudart)
-list(APPEND 3RDPARTY_LIBRARIES sgm)
 
 
-set(3RDPARTY_INCLUDE_DIRS ${3RDPARTY_INCLUDE_DIRS} PARENT_SCOPE)
-set(3RDPARTY_LIBRARIES ${3RDPARTY_LIBRARIES} PARENT_SCOPE)
-
-install(TARGETS
-        ${FLANN_LIBRARIES}
+#install(TARGETS
+#        ${FLANN_LIBRARIES}
 #        ${GLEW_LIBRARIES}
 #        ${glfw_LIBRARIES}
 #        ${JPEG_TURBO_LIBRARIES}
 #        ${PNG_LIBRARIES}
-        ${liblzf_LIBRARIES}
-        ${rply_LIBRARIES}
-        ${stdgpu_LIBRARIES}
-        ${SGM_LIBRARIES}
+#        ${liblzf_LIBRARIES}
+#        ${rply_LIBRARIES}
+#        ${stdgpu_LIBRARIES}
+#        ${SGM_LIBRARIES}
 #        ${googletest_LIBRARIES}
 #        ${imgui_LIBRARIES}
 #        ${urdfdom_LIBRARIES}
-    EXPORT ${PROJECT_NAME}3rdTargets
-    RUNTIME DESTINATION ${CUPOCH_INSTALL_BIN_DIR}
-    LIBRARY DESTINATION ${CUPOCH_INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${CUPOCH_INSTALL_LIB_DIR}
-)
+#    EXPORT ${PROJECT_NAME}3rdTargets
+#    RUNTIME DESTINATION ${CUPOCH_INSTALL_BIN_DIR}
+#    LIBRARY DESTINATION ${CUPOCH_INSTALL_LIB_DIR}
+#    ARCHIVE DESTINATION ${CUPOCH_INSTALL_LIB_DIR}
+#)
 
 #install(DIRECTORY
 #        ${rmm_INCLUDE_DIRS}
