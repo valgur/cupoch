@@ -18,11 +18,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  **/
-#include "cupoch/knn/kdtree_flann.h"
-#define FLANN_USE_CUDA
 #include <flann/flann.hpp>
-#undef FLANN_USE_CUDA
 
+#include "cupoch/knn/kdtree_flann.h"
 #include "cupoch/utility/console.h"
 
 namespace cupoch {
