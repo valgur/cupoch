@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from pathlib import Path
 
 def print_help():
     print("Usage:")
@@ -56,7 +57,7 @@ if __name__ == "__main__":
             sys.exit()
 
         file_in_name = sys.argv[2]
-        string_name = file_in_name.split(".")[0].split("/")[-1]
+        string_name = Path(file_in_name).stem
 
         fd_out.write("// clang-format off\n")
         write_string_header(string_name, fd_out)
