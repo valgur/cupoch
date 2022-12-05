@@ -41,12 +41,16 @@ jobs:
     - name: Install dependencies
       run: |
         ./scripts/actions/install_deps_ubuntu.sh
-        python -m pip install -U pip wheel setuptools
-    - name: CMake
+        python -m pip install -U pip wheel setuptools conan
+    - name: Conan dependencies
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_GLEW=ON -DBUILD_GLFW=ON -DBUILD_PNG=ON -DBUILD_JSONCPP=ON
+        conan install .. -of . -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+    - name: CMake
+      run: |
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
     - name: make
       run: |
         cd build

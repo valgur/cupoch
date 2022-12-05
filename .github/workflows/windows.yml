@@ -42,6 +42,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install conan
+      shell: bash
+      run: pip install -U conan
+
     - name: Install CUDA 
       env: 
         cuda: ${{ matrix.cuda }}
@@ -69,10 +73,13 @@ jobs:
       shell: bash
       run: cmake --version
 
+    - name: Conan dependencies
+      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+
     - name: Configure CMake
       id: configure
       shell: bash
-      run: cmake . -B ${{ env.build_dir }} -G "${{ matrix.visual_studio }}" -A x64 -DCMAKE_BUILD_TYPE=Release -DBUILD_GLEW=ON -DBUILD_GLFW=ON -DBUILD_PNG=ON -DBUILD_JSONCPP=ON
+      run: cmake . -B ${{ env.build_dir }} -G "${{ matrix.visual_studio }}" -A x64 -DCMAKE_BUILD_TYPE=Release
 
     - name: Configure Error Processing
       if: ${{ (failure() && steps.configure.outcome == 'failure') || success() }}
