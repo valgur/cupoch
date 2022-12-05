@@ -23,16 +23,20 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 
 ENV PATH $PATH:/root/.local/bin
 
-COPY . .
-
+COPY src/python src/python
 RUN cd src/python \
     && poetry config virtualenvs.create false \
-    && poetry run pip install -U pip \
+    && poetry run pip install -U pip wheel conan cmake \
     && poetry install
 
 ENV PYTHONPATH $PYTHONPATH:/usr/lib/python3.8/site-packages
 
+COPY conanfile.py conanfile.py
 RUN mkdir build \
     && cd build \
-    && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_GLEW=ON -DBUILD_GLFW=ON -DBUILD_PNG=ON -DBUILD_JSONCPP=ON \
+    && conan install .. -of . -c tools.system.package_manager:mode=install
+
+COPY . .
+RUN cd build \
+    && cmake .. -DCMAKE_BUILD_TYPE=Release \
     && make install-pip-package
