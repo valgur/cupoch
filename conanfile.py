@@ -88,3 +88,6 @@ class CupochConan(ConanFile):
             "cupoch_utility",
             "flann_cuda_s",
         ]
+        # Make the system dependencies easier to install by default in Conan 2.0
+        self.conf_info.define("tools.system.package_manager:mode", "install")
+        self.conf_info.define("tools.system.package_manager:sudo", True)

@@ -72,7 +72,10 @@ git clone https://github.com/neka-nat/cupoch.git --recurse
 cd cupoch
 mkdir build
 cd build
-cmake ..; make install-pip-package -j
+pip install conan
+conan install .. -of . -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+cmake ..
+cmake --build . --parallel --target install-pip-package
 ```
 
 ### Installation for Jetson Nano
