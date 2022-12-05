@@ -8,7 +8,7 @@ target_link_libraries(cupoch_knn
         cupoch_utility
         Eigen3::Eigen
         lbvh::lbvh_index
+        flann::flann_cuda_s
     PRIVATE
         cupoch_flags
-        flann::flann_cuda_s
 )

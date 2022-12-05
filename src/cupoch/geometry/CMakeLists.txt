@@ -6,8 +6,8 @@ target_link_libraries(cupoch_geometry
         cupoch_camera
         cupoch_knn
         Eigen3::Eigen
+        tomasakeninemoeller::tritriintersect
     PRIVATE
         cupoch_flags
         stdgpu
-        tomasakeninemoeller::tritriintersect
 )
