@@ -130,7 +130,11 @@ endif ()
 
 find_package(CUDAToolkit REQUIRED)
 add_library(cupoch_flags INTERFACE)
-set(CMAKE_CUDA_ARCHITECTURES 52)
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    # Generate for 10xx+ series GPUs by default.
+    # Newer but not listed GPUs will JIT compile on launch.
+    set(CMAKE_CUDA_ARCHITECTURES 61)
+endif()
 target_compile_features(cupoch_flags INTERFACE cxx_std_14 $<BUILD_INTERFACE:cuda_std_14>)
 target_compile_options(cupoch_flags INTERFACE
     "$<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>"
