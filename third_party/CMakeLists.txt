@@ -2,7 +2,10 @@
 file(GLOB_RECURSE CU_SOURCES flann/*.cu)
 add_library(flann_cuda_s STATIC ${CU_SOURCES})
 add_library(flann::flann_cuda_s ALIAS flann_cuda_s)
-target_include_directories(flann_cuda_s PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(flann_cuda_s PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/flann>
+    $<INSTALL_INTERFACE:flann>
+)
 target_compile_definitions(flann_cuda_s PUBLIC FLANN_USE_CUDA)
 target_link_libraries(flann_cuda_s PRIVATE cupoch_flags CUDA::cudart spdlog::spdlog rmm::rmm)
 
@@ -19,7 +22,10 @@ set_target_properties(liblzf PROPERTIES LINKER_LANGUAGE C)
 # tritriintersect
 add_library(tomasakeninemoeller INTERFACE)
 add_library(tomasakeninemoeller::tritriintersect ALIAS tomasakeninemoeller)
-target_include_directories(tomasakeninemoeller INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_include_directories(tomasakeninemoeller INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tritriintersect>
+    $<INSTALL_INTERFACE:tritriintersect>
+)
 
 # stdgpu
 set(STDGPU_BUILD_EXAMPLES OFF CACHE INTERNAL "")
