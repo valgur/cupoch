@@ -95,10 +95,26 @@ class CupochConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = [
+            "cupoch_camera",
+            "cupoch_collision",
             "cupoch_geometry",
+            "cupoch_imageproc",
+            "cupoch_integration",
+            "cupoch_io",
+            "cupoch_kinematics",
+            "cupoch_kinfu",
+            "cupoch_knn",
+            "cupoch_odometry",
+            "cupoch_planning",
             "cupoch_registration",
             "cupoch_utility",
+            "cupoch_visualization",
             "flann_cuda_s",
+            "liblzf",
+            "rply",
+            "console_bridge",
+            "urdfdom",
+            "sgm",
         ]
         # Make the system dependencies easier to install by default in Conan 2.0
         self.conf_info.define("tools.system.package_manager:mode", "install")
