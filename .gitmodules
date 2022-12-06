@@ -7,6 +7,3 @@
 [submodule "stdgpu"]
     path = third_party/stdgpu
     url = https://github.com/stotko/stdgpu.git
-[submodule "tinyobjloader"]
-    path = third_party/tinyobjloader
-    url = https://github.com/syoyo/tinyobjloader.git
