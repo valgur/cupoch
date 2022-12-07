@@ -23,7 +23,7 @@ class CupochConan(ConanFile):
     default_options = {"shared": False, "fPIC": True}
     build_policy = "missing"
 
-    exports_sources = ["include/*", "src/*", "cmake/*", "third_party/*", "CMakeLists.txt"]
+    exports_sources = ["include/*", "src/*", "cmake/*", "examples/*", "scripts/*", "third_party/*", "CMakeLists.txt"]
 
     @property
     def _with_unit_tests(self):
