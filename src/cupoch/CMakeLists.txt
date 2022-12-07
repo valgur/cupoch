@@ -26,6 +26,7 @@ install(TARGETS
                 ${PROJECT_NAME}_io
                 ${PROJECT_NAME}_kinematics
                 ${PROJECT_NAME}_kinfu
+                ${PROJECT_NAME}_knn
                 ${PROJECT_NAME}_odometry
                 ${PROJECT_NAME}_planning
                 ${PROJECT_NAME}_registration
