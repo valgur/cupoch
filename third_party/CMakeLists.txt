@@ -8,7 +8,7 @@ target_link_libraries(flann_cuda_s PRIVATE cupoch_flags CUDA::cudart spdlog::spd
 install(TARGETS flann_cuda_s)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/flann/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.h")
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 # liblzf
 enable_language(C)
@@ -47,7 +47,7 @@ target_include_directories(stdgpu INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SO
 install(TARGETS stdgpu)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src/stdgpu
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.h" PATTERN "*.cuh")
+    FILES_MATCHING PATTERN "*.cpp" EXCLUDE PATTERN "*.txt" EXCLUDE)
 
 # rply
 enable_language(C)
