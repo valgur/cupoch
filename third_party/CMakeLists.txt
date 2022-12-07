@@ -93,7 +93,8 @@ add_library(console_bridge urdfdom/urdf_parser/src/console.cpp)
 set_target_properties(console_bridge PROPERTIES SOVERSION
     ${CONSOLE_BRIDGE_MAJOR_VERSION}.${CONSOLE_BRIDGE_MINOR_VERSION})
 target_include_directories(console_bridge PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>)
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/urdfdom/urdf_parser/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 include(GenerateExportHeader)
 generate_export_header(console_bridge EXPORT_MACRO_NAME CONSOLE_BRIDGE_DLLAPI)
 
