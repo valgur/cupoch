@@ -5,5 +5,8 @@ install*
 site
 **/__pycache__
 src/cupoch/visualization/shader/shader.h
+src/cupoch/visualization/visualizer/imgui
 **/imgui.ini
 src/python/poetry.lock
+test_package/build
+**/CMakeUserPresets.json
