@@ -19,11 +19,19 @@ class CupochConan(ConanFile):
     description = "Rapid 3D data processing for robotics using CUDA."
 
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {"shared": [True, False], "fPIC": [True, False], "use_rmm": [True, False]}
+    default_options = {"shared": False, "fPIC": True, "use_rmm": True}
     build_policy = "missing"
 
-    exports_sources = ["include/*", "src/*", "cmake/*", "examples/*", "scripts/*", "third_party/*", "CMakeLists.txt"]
+    exports_sources = [
+        "include/*",
+        "src/*",
+        "cmake/*",
+        "examples/*",
+        "scripts/*",
+        "third_party/*",
+        "CMakeLists.txt",
+    ]
 
     @property
     def _with_unit_tests(self):
@@ -34,6 +42,15 @@ class CupochConan(ConanFile):
     @property
     def _skip_build(self):
         return os.environ.get("SKIP_BUILD", "0") != "0"
+
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+            del self.options.use_rmm
+
+    def configure(self):
+        if self.options.shared:
+            del self.options.fPIC
 
     def requirements(self):
         self.requires("eigen/3.4.0", headers=True, transitive_headers=True)
@@ -57,7 +74,9 @@ class CupochConan(ConanFile):
     def generate(self):
         imgui_paths = self.dependencies["imgui/1.89.1"].cpp_info.srcdirs
         backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
-        output_dir = os.path.join(self.source_folder, "src/cupoch/visualization/visualizer/imgui/backends")
+        output_dir = os.path.join(
+            self.source_folder, "src/cupoch/visualization/visualizer/imgui/backends"
+        )
         for backend_file in [
             "imgui_impl_glfw.h",
             "imgui_impl_glfw.cpp",
@@ -70,7 +89,10 @@ class CupochConan(ConanFile):
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
-        tc.cache_variables["BUILD_TESTING"] = self._with_unit_tests
+        tc.cache_variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
+        tc.cache_variables["BUILD_EXAMPLES"] = False
+        tc.cache_variables["BUILD_PYTHON_MODULE"] = False
+        tc.cache_variables["USE_RMM"] = "use_rmm" in self.options and self.options.use_rmm
         tc.generate()
 
         CMakeDeps(self).generate()
@@ -116,6 +138,16 @@ class CupochConan(ConanFile):
             "urdfdom",
             "sgm",
         ]
+        self.cpp_info.defines.append("FLANN_USE_CUDA")
+        if self.settings.os == "Windows":
+            self.cpp_info.append("WINDOWS")
+            self.cpp_info.append("_CRT_SECURE_NO_DEPRECATE")
+            self.cpp_info.append("_CRT_NONSTDC_NO_DEPRECATE")
+            self.cpp_info.append("_SCL_SECURE_NO_WARNINGS")
+            self.cpp_info.append("GLEW_STATIC")
+            self.cpp_info.append("THRUST_CPP11_REQUIRED_NO_ERROR")
+            self.cpp_info.append("NOMINMAX")
+            self.cpp_info.append("_USE_MATH_DEFINES")
         # Make the system dependencies easier to install by default in Conan 2.0
         self.conf_info.define("tools.system.package_manager:mode", "install")
         self.conf_info.define("tools.system.package_manager:sudo", True)

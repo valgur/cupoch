@@ -26,6 +26,7 @@ set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
     "Installation directory for CMake files")
 
 option(BUILD_UNIT_TESTS          "Build the Cupoch unit tests"              ON)
+option(BUILD_EXAMPLES            "Build the Cupoch examples"                ON)
 option(BUILD_PYTHON_MODULE       "Build the python module"                  ON)
 option(USE_RMM                   "Use rmm library(fast memory allocator)"   ON)
 option(STATIC_WINDOWS_RUNTIME    "Use static (MT/MTd) Windows runtime"      OFF)
@@ -101,11 +102,16 @@ elseif (APPLE)
     endif (NOT BUILD_SHARED_LIBS)
     # In Release build -O3 will be added automatically by CMake
     # We still enable -O3 at Debug build to optimize performance
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if (uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-        add_definitions(-O3)
+        add_compile_options(-O3)
     endif()
 elseif (UNIX)
     add_definitions(-DUNIX)
+    # TODO: replace these with CMake properties:
+    # - POSITION_INDEPENDENT_CODE
+    # - CXX_STANDARD
+    # - CMAKE_CXX_VISIBILITY_PRESET
     # enable c++17
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC")
@@ -115,8 +121,9 @@ elseif (UNIX)
     add_compile_options(-Wno-deprecated-declarations)
     # In Release build -O3 will be added automatically by CMake
     # We still enable -O3 at debug build to optimize performance
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if (uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-        add_definitions(-O3)
+        add_compile_options(-O3)
     endif()
     # disable BUILD_LIBREALSENSE since it is not fully supported on Linux
     message(STATUS "Compiling on Unix")
@@ -176,4 +183,6 @@ add_subdirectory(third_party)
 
 include_directories(src)
 add_subdirectory(src)
-add_subdirectory(examples)
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
