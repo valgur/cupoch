@@ -49,19 +49,6 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src/stdgpu
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.cpp" EXCLUDE PATTERN "*.txt" EXCLUDE)
 
-# rply
-enable_language(C)
-add_library(rply rply/rply.c)
-add_library(rply::rply ALIAS rply)
-set_target_properties(rply PROPERTIES LINKER_LANGUAGE C)
-target_include_directories(rply INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rply>
-    $<INSTALL_INTERFACE:rply>)
-install(TARGETS rply)
-#install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rply
-#    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#    FILES_MATCHING PATTERN "*.h")
-
 # rmm
 add_library(rmm INTERFACE)
 add_library(rmm::rmm ALIAS rmm)

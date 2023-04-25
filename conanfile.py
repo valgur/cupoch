@@ -53,16 +53,17 @@ class CupochConan(ConanFile):
             del self.options.fPIC
 
     def requirements(self):
-        self.requires("eigen/3.4.0", headers=True, transitive_headers=True)
-        self.requires("spdlog/1.8.5", headers=True, libs=True)
         self.requires("dlpack/0.4", headers=True, libs=True)
-        self.requires("jsoncpp/1.9.5", headers=True, libs=True)
-        self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
-        self.requires("libpng/1.6.39", headers=True, libs=True)
-        self.requires("libjpeg-turbo/2.1.4", headers=True, libs=True)
+        self.requires("eigen/3.4.0", headers=True, transitive_headers=True)
         self.requires("glew/2.2.0", headers=True, libs=True)
         self.requires("glfw/3.3.8", headers=True, libs=True)
         self.requires("imgui/1.89.1", headers=True, libs=True)
+        self.requires("jsoncpp/1.9.5", headers=True, libs=True)
+        self.requires("libjpeg-turbo/2.1.4", headers=True, libs=True)
+        self.requires("libpng/1.6.39", headers=True, libs=True)
+        self.requires("rply/1.1.4", headers=True, libs=True)
+        self.requires("spdlog/1.8.5", headers=True, libs=True)
+        self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
 
     def build_requirements(self):
         self.test_requires("gtest/1.12.1")
@@ -133,7 +134,6 @@ class CupochConan(ConanFile):
             "cupoch_visualization",
             "flann_cuda_s",
             "liblzf",
-            "rply",
             "console_bridge",
             "urdfdom",
             "sgm",
