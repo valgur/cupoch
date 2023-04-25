@@ -1,5 +1,7 @@
 set(PACKAGE_NAME cupoch)
 
+find_package(pybind11 REQUIRED CONFIG)
+
 file(GLOB_RECURSE PY_ALL_SOURCE_FILES "cupoch_pybind/*.cpp")
 
 add_library(${PACKAGE_NAME} SHARED

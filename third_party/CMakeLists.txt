@@ -1,4 +1,5 @@
 # flann
+find_package(flann REQUIRED CONFIG)
 file(GLOB_RECURSE CU_SOURCES flann/*.cu)
 add_library(flann_cuda_s STATIC ${CU_SOURCES})
 add_library(flann::flann_cuda_s ALIAS flann_cuda_s)
@@ -50,6 +51,7 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src/stdgpu
     FILES_MATCHING PATTERN "*.cpp" EXCLUDE PATTERN "*.txt" EXCLUDE)
 
 # rmm
+find_package(spdlog REQUIRED CONFIG)
 add_library(rmm INTERFACE)
 add_library(rmm::rmm ALIAS rmm)
 target_include_directories(rmm INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/rmm/include>)

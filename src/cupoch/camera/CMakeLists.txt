@@ -6,5 +6,4 @@ target_link_libraries(cupoch_camera
         Eigen3::Eigen
     PRIVATE
         cupoch_flags
-        JsonCpp::JsonCpp
 )

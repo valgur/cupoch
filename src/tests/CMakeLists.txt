@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 file(GLOB_RECURSE UNIT_TESTS "*.cpp")
 
+find_package(GTest REQUIRED CONFIG)
+
 add_executable(unittests ${UNIT_TESTS})
 add_definitions(-DTEST_DATA_DIR="${PROJECT_SOURCE_DIR}/examples/testdata")
 target_link_libraries(unittests PRIVATE

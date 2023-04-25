@@ -21,9 +21,12 @@ add_custom_target(shader_file_target ALL
                   DEPENDS ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/shader.h)
 set_target_properties(shader_file_target PROPERTIES FOLDER "custom")
 
+find_package(GLEW REQUIRED CONFIG)
+find_package(glfw3 REQUIRED CONFIG)
+find_package(imgui REQUIRED CONFIG)
+
 file(GLOB_RECURSE VISUALIZATION_CPP_SOURCE_FILES "*.cpp")
 file(GLOB_RECURSE VISUALIZATION_CUDA_SOURCE_FILES "*.cu")
-
 # create object library
 add_library(cupoch_visualization ${VISUALIZATION_CUDA_SOURCE_FILES} ${VISUALIZATION_CPP_SOURCE_FILES})
 add_dependencies(cupoch_visualization shader_file_target)
@@ -38,5 +41,4 @@ target_link_libraries(cupoch_visualization
     PRIVATE
         cupoch_io
         imgui::imgui
-        JsonCpp::JsonCpp
 )
