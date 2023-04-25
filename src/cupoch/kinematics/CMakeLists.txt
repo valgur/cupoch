@@ -1,3 +1,5 @@
+find_package(urdfdom REQUIRED CONFIG)
+
 file(GLOB_RECURSE KINEMATICS_SOURCE_FILES "*.cpp")
 
 # Create object library

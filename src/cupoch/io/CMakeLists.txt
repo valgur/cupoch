@@ -1,4 +1,5 @@
 find_package(libjpeg-turbo REQUIRED CONFIG)
+find_package(liblzf REQUIRED CONFIG)
 find_package(PNG REQUIRED CONFIG)
 find_package(rply REQUIRED CONFIG)
 find_package(tinyobjloader REQUIRED CONFIG)

@@ -1,3 +1,6 @@
+find_package(flann_cuda REQUIRED CONFIG)
+find_package(lbvh REQUIRED CONFIG)
+
 # build
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 

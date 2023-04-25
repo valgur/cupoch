@@ -165,9 +165,10 @@ if(NOT DEFINED CONAN_CXX_FLAGS)
     conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
 endif()
 
-find_package(Eigen3 REQUIRED CONFIG)
+list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/third_party")
 
-add_subdirectory(third_party)
+find_package(Eigen3 REQUIRED CONFIG)
+find_package(spdlog REQUIRED CONFIG)
 
 include_directories(src)
 add_subdirectory(src)

@@ -1,7 +1,8 @@
 find_package(dlpack REQUIRED CONFIG)
 find_package(jsoncpp REQUIRED CONFIG)
 find_package(OpenGL REQUIRED)
-find_package(spdlog REQUIRED CONFIG)
+find_package(rmm REQUIRED CONFIG)
+find_package(stdgpu REQUIRED CONFIG)
 
 file(GLOB_RECURSE ALL_CPP_SOURCE_FILES "*.cpp")
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
@@ -13,7 +14,7 @@ target_link_libraries(cupoch_utility
         Eigen3::Eigen
         JsonCpp::JsonCpp
         rmm::rmm
-        stdgpu
+        stdgpu::stdgpu
     PRIVATE
         OpenGL::GL
         spdlog::spdlog

@@ -1,3 +1,5 @@
+find_package(stdgpu REQUIRED CONFIG)
+
 # build
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 
@@ -10,5 +12,5 @@ target_link_libraries(cupoch_integration
     PRIVATE
         cupoch_flags
         cupoch_utility
-        stdgpu
+        stdgpu::stdgpu
 )
