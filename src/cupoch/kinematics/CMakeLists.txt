@@ -1,3 +1,9 @@
+option(BUILD_cupoch_kinematics "Include cupoch_kinematics module in the build" TRUE)
+if(NOT BUILD_cupoch_kinematics)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_kinematics PARENT_SCOPE)
+
 find_package(urdfdom REQUIRED CONFIG)
 
 file(GLOB_RECURSE KINEMATICS_SOURCE_FILES "*.cpp")
@@ -10,6 +16,4 @@ target_link_libraries(cupoch_kinematics
         cupoch_io
         cupoch_utility
         urdfdom::urdfdom
-    PRIVATE
-        cupoch_utility
 )

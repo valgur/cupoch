@@ -1,3 +1,5 @@
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_utility PARENT_SCOPE)
+
 find_package(dlpack REQUIRED CONFIG)
 find_package(jsoncpp REQUIRED CONFIG)
 find_package(OpenGL REQUIRED)

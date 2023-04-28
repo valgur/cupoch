@@ -1,3 +1,9 @@
+option(BUILD_cupoch_knn "Include cupoch_knn module in the build" TRUE)
+if(NOT BUILD_cupoch_knn)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_knn PARENT_SCOPE)
+
 find_package(flann_cuda REQUIRED CONFIG)
 find_package(lbvh REQUIRED CONFIG)
 

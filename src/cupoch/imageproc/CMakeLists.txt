@@ -1,3 +1,9 @@
+option(BUILD_cupoch_imageproc "Include cupoch_imageproc module in the build" TRUE)
+if(NOT BUILD_cupoch_imageproc)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_imageproc PARENT_SCOPE)
+
 find_package(sgm REQUIRED CONFIG)
 
 file(GLOB_RECURSE IMAGEPROC_SOURCE_FILES "*.cpp")

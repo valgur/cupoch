@@ -1,3 +1,9 @@
+option(BUILD_cupoch_odometry "Include cupoch_odometry module in the build" TRUE)
+if(NOT BUILD_cupoch_odometry)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_odometry PARENT_SCOPE)
+
 # build
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 

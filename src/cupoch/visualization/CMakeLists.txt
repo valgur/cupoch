@@ -1,3 +1,9 @@
+option(BUILD_cupoch_visualization "Include cupoch_visualization module in the build" TRUE)
+if(NOT BUILD_cupoch_visualization)
+    return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_visualization PARENT_SCOPE)
+
 file(GLOB SHADER_FILES "shader/glsl/*.glsl")
 
 add_custom_command(

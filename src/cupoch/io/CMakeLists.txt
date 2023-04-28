@@ -1,3 +1,9 @@
+option(BUILD_cupoch_io "Include cupoch_io module in the build" TRUE)
+if(NOT BUILD_cupoch_io)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_io PARENT_SCOPE)
+
 find_package(libjpeg-turbo REQUIRED CONFIG)
 find_package(liblzf REQUIRED CONFIG)
 find_package(PNG REQUIRED CONFIG)

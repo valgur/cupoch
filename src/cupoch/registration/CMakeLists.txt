@@ -1,3 +1,9 @@
+option(BUILD_cupoch_registration "Include cupoch_registration module in the build" TRUE)
+if(NOT BUILD_cupoch_registration)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_registration PARENT_SCOPE)
+
 find_package(stdgpu REQUIRED CONFIG)
 
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
@@ -7,7 +13,6 @@ target_link_libraries(cupoch_registration
         cupoch_knn
         cupoch_utility
         stdgpu::stdgpu
-    PRIVATE
         cupoch_flags
         cupoch_geometry
         Eigen3::Eigen

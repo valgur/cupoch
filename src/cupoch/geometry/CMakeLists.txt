@@ -1,3 +1,9 @@
+option(BUILD_cupoch_geometry "Include cupoch_geometry module in the build" TRUE)
+if(NOT BUILD_cupoch_geometry)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_geometry PARENT_SCOPE)
+
 find_package(stdgpu REQUIRED CONFIG)
 find_package(tritriintersect REQUIRED CONFIG)
 

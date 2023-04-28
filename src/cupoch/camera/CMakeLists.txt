@@ -1,3 +1,9 @@
+option(BUILD_cupoch_camera "Include cupoch_camera module in the build" TRUE)
+if(NOT BUILD_cupoch_camera)
+    return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_camera PARENT_SCOPE)
+
 file(GLOB_RECURSE CAMERA_SOURCE_FILES "*.cpp")
 add_library(cupoch_camera ${CAMERA_SOURCE_FILES})
 target_link_libraries(cupoch_camera

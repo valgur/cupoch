@@ -1,3 +1,9 @@
+option(BUILD_cupoch_collision "Include cupoch_collision module in the build" TRUE)
+if(NOT BUILD_cupoch_collision)
+  return()
+endif()
+set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_collision PARENT_SCOPE)
+
 find_package(lbvh REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 find_package(tritriintersect REQUIRED CONFIG)

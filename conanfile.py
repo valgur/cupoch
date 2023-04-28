@@ -6,6 +6,24 @@ from conan.tools.files import copy
 
 required_conan_version = ">=1.53.0"
 
+MODULE_DEPS = {
+    "camera": ["utility"],
+    "collision": ["geometry", "utility"],
+    "geometry": ["camera", "knn", "utility"],
+    "imageproc": ["geometry", "utility"],
+    "integration": ["camera", "geometry", "utility"],
+    "io": ["geometry", "utility"],
+    "kinematics": ["collision", "io", "utility"],
+    "kinfu": ["camera", "geometry", "integration", "registration", "utility"],
+    "knn": ["utility"],
+    "odometry": ["camera", "geometry", "utility"],
+    "planning": ["collision", "geometry", "utility"],
+    "registration": ["geometry", "knn", "utility"],
+    "utility": [],
+    "visualization": ["camera", "geometry", "io", "utility"],
+}
+MODULES = sorted(MODULE_DEPS)
+
 
 class CupochConan(ConanFile):
     name = "cupoch"
@@ -23,11 +41,14 @@ class CupochConan(ConanFile):
         "fPIC": [True, False],
         "use_rmm": [True, False],
     }
+    options.update({module: [True, False] for module in MODULES})
+
     default_options = {
         "shared": False,
         "fPIC": True,
         "use_rmm": True,
     }
+    default_options.update({module: True for module in MODULES})
 
     exports_sources = [
         "include/*",
@@ -38,6 +59,21 @@ class CupochConan(ConanFile):
         "third_party/*",
         "CMakeLists.txt",
     ]
+
+    @property
+    def _enabled_modules(self):
+        # The list of requested modules together with their dependencies
+        def add_deps(modules):
+            for dep in modules:
+                if dep not in mods:
+                    mods.add(dep)
+                    add_deps(MODULE_DEPS[dep])
+
+        if not hasattr(self, "_enabled_modules_cache"):
+            mods = set()
+            add_deps([mod for mod in MODULES if self.options.get_safe(mod, False)])
+            self._enabled_modules_cache = sorted(mods)
+        return self._enabled_modules_cache
 
     @property
     def _with_unit_tests(self):
@@ -55,28 +91,33 @@ class CupochConan(ConanFile):
             del self.options.fPIC
 
     def requirements(self):
-        self.requires("dlpack/0.4", headers=True, libs=True)
+        # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
-        self.requires("glew/2.2.0", headers=True, libs=True)
-        self.requires("glfw/3.3.8", headers=True, libs=True)
-        self.requires("imgui/1.89.4", headers=True, libs=True)
-        self.requires("jsoncpp/1.9.5", headers=True, libs=True)
-        self.requires("libjpeg-turbo/2.1.5", headers=True, libs=True)
-        self.requires("libpng/1.6.39", headers=True, libs=True)
-        self.requires("rply/1.1.4", headers=True, libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
-        self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
-        # https://github.com/conan-io/conan-center-index/pull/17282
-        # self.requires("liblzf/3.6", headers=True, libs=True)
+        self.requires("dlpack/0.4", headers=True, libs=True)
+        self.requires("jsoncpp/1.9.5", headers=True, libs=True)
+
+        modules = self._enabled_modules
+        print("Enabled modules:", modules)
+        if "io" in modules:
+            self.requires("libjpeg-turbo/2.1.5", headers=True, libs=True)
+            self.requires("libpng/1.6.39", headers=True, libs=True)
+            self.requires("rply/1.1.4", headers=True, libs=True)
+            self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
+            # https://github.com/conan-io/conan-center-index/pull/17282
+            # self.requires("liblzf/3.6", headers=True, libs=True)
+        if "visualization" in modules:
+            self.requires("glew/2.2.0", headers=True, libs=True)
+            self.requires("glfw/3.3.8", headers=True, libs=True)
+            self.requires("imgui/1.89.4", headers=True, libs=True)
 
     def build_requirements(self):
         self.test_requires("gtest/1.13.0")
-        self.test_requires("pybind11/2.10.1")
 
     def layout(self):
         cmake_layout(self)
 
-    def source(self):
+    def _copy_imgui_backend(self):
         # The imgui backends are not built by default and need to be copied to the source tree
         imgui_paths = self.dependencies["imgui/1.89.4"].cpp_info.srcdirs
         backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
@@ -93,14 +134,20 @@ class CupochConan(ConanFile):
             copy(self, backend_file, backends_dir, output_dir)
 
     def generate(self):
+        if "visualization" in self._enabled_modules:
+            self._copy_imgui_backend()
+
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
-        tc.variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
-        tc.variables["BUILD_EXAMPLES"] = False
-        tc.variables["BUILD_PYTHON_MODULE"] = False
-        tc.variables["USE_RMM"] = self.options.use_rmm
+        tc.cache_variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
+        tc.cache_variables["BUILD_EXAMPLES"] = False
+        tc.cache_variables["BUILD_PYTHON_MODULE"] = False
+        tc.cache_variables["USE_RMM"] = self.options.use_rmm
+        for module in MODULES:
+            tc.cache_variables[f"BUILD_cupoch_{module}"] = module in self._enabled_modules
         tc.generate()
+
         CMakeDeps(self).generate()
 
     def build(self):
@@ -115,38 +162,27 @@ class CupochConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        # components
-        self.cpp_info.libs = [
-            "cupoch_camera",
-            "cupoch_collision",
-            "cupoch_geometry",
-            "cupoch_imageproc",
-            "cupoch_integration",
-            "cupoch_io",
-            "cupoch_kinematics",
-            "cupoch_kinfu",
-            "cupoch_knn",
-            "cupoch_odometry",
-            "cupoch_planning",
-            "cupoch_registration",
-            "cupoch_utility",
-            "cupoch_visualization",
-        ]
-        # third-party libs
-        self.cpp_info.libs += [
-            "flann_cuda_s",
-            "liblzf",
-            "console_bridge",
-            "urdfdom",
-            "sgm",
-        ]
+        mod_lib_deps = {
+            "imageproc": ["sgm"],
+            "io": ["liblzf"],
+            "kinematics": ["console_bridge", "urdfdom"],
+            "knn": ["flann_cuda_s"],
+        }
+        for module in self._enabled_modules:
+            # TODO: exporting modules as individual components would be preferable
+            # component = self.cpp_info.components[module]
+            # component.set_property("cmake_target_name", f"cupoch::{module}")
+            # component.requires = MODULE_DEPS.get(module, [])
+            self.cpp_info.libs += [f"cupoch_{module}"]
+            self.cpp_info.libs += mod_lib_deps.get(module, [])
+
+        # Propagate necessary build flags
         self.cpp_info.defines.append("FLANN_USE_CUDA")
+        self.cpp_info.defines.append("_USE_MATH_DEFINES")
         if self.settings.os == "Windows":
-            self.cpp_info.append("WINDOWS")
-            self.cpp_info.append("_CRT_SECURE_NO_DEPRECATE")
-            self.cpp_info.append("_CRT_NONSTDC_NO_DEPRECATE")
-            self.cpp_info.append("_SCL_SECURE_NO_WARNINGS")
-            self.cpp_info.append("GLEW_STATIC")
-            self.cpp_info.append("THRUST_CPP11_REQUIRED_NO_ERROR")
-            self.cpp_info.append("NOMINMAX")
-            self.cpp_info.append("_USE_MATH_DEFINES")
+            self.cpp_info.defines.append("_CRT_SECURE_NO_DEPRECATE")
+            self.cpp_info.defines.append("_CRT_NONSTDC_NO_DEPRECATE")
+            self.cpp_info.defines.append("_SCL_SECURE_NO_WARNINGS")
+            self.cpp_info.defines.append("GLEW_STATIC")
+            self.cpp_info.defines.append("THRUST_CPP11_REQUIRED_NO_ERROR")
+            self.cpp_info.defines.append("NOMINMAX")
