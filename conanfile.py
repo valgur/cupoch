@@ -4,8 +4,7 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.files import copy
 
-# for self.info.clear()
-required_conan_version = ">=1.50.0"
+required_conan_version = ">=1.53.0"
 
 
 class CupochConan(ConanFile):
@@ -19,9 +18,16 @@ class CupochConan(ConanFile):
     description = "Rapid 3D data processing for robotics using CUDA."
 
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False], "use_rmm": [True, False]}
-    default_options = {"shared": False, "fPIC": True, "use_rmm": True}
-    build_policy = "missing"
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False],
+        "use_rmm": [True, False],
+    }
+    default_options = {
+        "shared": False,
+        "fPIC": True,
+        "use_rmm": True,
+    }
 
     exports_sources = [
         "include/*",
@@ -39,10 +45,6 @@ class CupochConan(ConanFile):
         # Add '-c tools.build:skip_test=false' to command line args to enable.
         return not self.conf.get("tools.build:skip_test", default=True, check_type=bool)
 
-    @property
-    def _skip_build(self):
-        return os.environ.get("SKIP_BUILD", "0") != "0"
-
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
@@ -54,26 +56,29 @@ class CupochConan(ConanFile):
 
     def requirements(self):
         self.requires("dlpack/0.4", headers=True, libs=True)
-        self.requires("eigen/3.4.0", headers=True, transitive_headers=True)
+        self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("glew/2.2.0", headers=True, libs=True)
         self.requires("glfw/3.3.8", headers=True, libs=True)
-        self.requires("imgui/1.89.1", headers=True, libs=True)
+        self.requires("imgui/1.89.4", headers=True, libs=True)
         self.requires("jsoncpp/1.9.5", headers=True, libs=True)
-        self.requires("libjpeg-turbo/2.1.4", headers=True, libs=True)
+        self.requires("libjpeg-turbo/2.1.5", headers=True, libs=True)
         self.requires("libpng/1.6.39", headers=True, libs=True)
         self.requires("rply/1.1.4", headers=True, libs=True)
-        self.requires("spdlog/1.8.5", headers=True, libs=True)
+        self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
         self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
+        # https://github.com/conan-io/conan-center-index/pull/17282
+        # self.requires("liblzf/3.6", headers=True, libs=True)
 
     def build_requirements(self):
-        self.test_requires("gtest/1.12.1")
+        self.test_requires("gtest/1.13.0")
         self.test_requires("pybind11/2.10.1")
 
     def layout(self):
         cmake_layout(self)
 
-    def generate(self):
-        imgui_paths = self.dependencies["imgui/1.89.1"].cpp_info.srcdirs
+    def source(self):
+        # The imgui backends are not built by default and need to be copied to the source tree
+        imgui_paths = self.dependencies["imgui/1.89.4"].cpp_info.srcdirs
         backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
         output_dir = os.path.join(
             self.source_folder, "src/cupoch/visualization/visualizer/imgui/backends"
@@ -87,20 +92,18 @@ class CupochConan(ConanFile):
         ]:
             copy(self, backend_file, backends_dir, output_dir)
 
+    def generate(self):
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
-        tc.cache_variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
-        tc.cache_variables["BUILD_EXAMPLES"] = False
-        tc.cache_variables["BUILD_PYTHON_MODULE"] = False
-        tc.cache_variables["USE_RMM"] = "use_rmm" in self.options and self.options.use_rmm
+        tc.variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
+        tc.variables["BUILD_EXAMPLES"] = False
+        tc.variables["BUILD_PYTHON_MODULE"] = False
+        tc.variables["USE_RMM"] = self.options.use_rmm
         tc.generate()
-
         CMakeDeps(self).generate()
 
     def build(self):
-        if self._skip_build:
-            return
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
@@ -111,12 +114,8 @@ class CupochConan(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-    def package_id(self):
-        if self._skip_build:
-            # Treat the package as if it was header-only
-            self.info.clear()
-
     def package_info(self):
+        # components
         self.cpp_info.libs = [
             "cupoch_camera",
             "cupoch_collision",
@@ -132,6 +131,9 @@ class CupochConan(ConanFile):
             "cupoch_registration",
             "cupoch_utility",
             "cupoch_visualization",
+        ]
+        # third-party libs
+        self.cpp_info.libs += [
             "flann_cuda_s",
             "liblzf",
             "console_bridge",
@@ -148,6 +150,3 @@ class CupochConan(ConanFile):
             self.cpp_info.append("THRUST_CPP11_REQUIRED_NO_ERROR")
             self.cpp_info.append("NOMINMAX")
             self.cpp_info.append("_USE_MATH_DEFINES")
-        # Make the system dependencies easier to install by default in Conan 2.0
-        self.conf_info.define("tools.system.package_manager:mode", "install")
-        self.conf_info.define("tools.system.package_manager:sudo", True)
