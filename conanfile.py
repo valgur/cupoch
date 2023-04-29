@@ -7,20 +7,19 @@ from conan.tools.files import copy
 required_conan_version = ">=1.53.0"
 
 MODULE_DEPS = {
-    "camera": ["utility"],
-    "collision": ["geometry", "utility"],
-    "geometry": ["camera", "knn", "utility"],
-    "imageproc": ["geometry", "utility"],
-    "integration": ["camera", "geometry", "utility"],
-    "io": ["geometry", "utility"],
-    "kinematics": ["collision", "io", "utility"],
-    "kinfu": ["camera", "geometry", "integration", "registration", "utility"],
-    "knn": ["utility"],
-    "odometry": ["camera", "geometry", "utility"],
-    "planning": ["collision", "geometry", "utility"],
-    "registration": ["geometry", "knn", "utility"],
-    "utility": [],
-    "visualization": ["camera", "geometry", "io", "utility"],
+    "camera": [],
+    "collision": ["geometry"],
+    "geometry": ["camera", "knn"],
+    "imageproc": ["geometry"],
+    "integration": ["camera", "geometry"],
+    "io": ["geometry"],
+    "kinematics": ["collision", "io"],
+    "kinfu": ["camera", "geometry", "integration", "registration"],
+    "knn": [],
+    "odometry": ["camera", "geometry"],
+    "planning": ["collision", "geometry"],
+    "registration": ["geometry", "knn"],
+    "visualization": ["camera", "geometry", "io"],
 }
 MODULES = sorted(MODULE_DEPS)
 
@@ -148,7 +147,10 @@ class CupochConan(ConanFile):
             tc.cache_variables[f"BUILD_cupoch_{module}"] = module in self._enabled_modules
         tc.generate()
 
-        CMakeDeps(self).generate()
+        deps = CMakeDeps(self)
+        # Make find_package() fail if any required components are missing
+        deps.check_components_exist = True
+        deps.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -175,6 +177,7 @@ class CupochConan(ConanFile):
             # component.requires = MODULE_DEPS.get(module, [])
             self.cpp_info.libs += [f"cupoch_{module}"]
             self.cpp_info.libs += mod_lib_deps.get(module, [])
+        self.cpp_info.libs += ["cupoch_utility"]
 
         # Propagate necessary build flags
         self.cpp_info.defines.append("FLANN_USE_CUDA")
