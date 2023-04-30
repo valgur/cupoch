@@ -18,7 +18,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  **/
+#include <thrust/sort.h>
+#include <thrust/set_operations.h>
 #include <thrust/gather.h>
+#include <thrust/count.h>
+#include <thrust/iterator/constant_iterator.h>
 #include <thrust/iterator/discard_iterator.h>
 
 #include <stdgpu/unordered_set.cuh>
@@ -257,7 +261,7 @@ Graph<Dim> &Graph<Dim>::ConstructGraph(bool set_edge_weights_from_distance) {
 
 template <int Dim>
 Graph<Dim> &Graph<Dim>::ConnectToNearestNeighbors(float max_edge_distance,
-                                                  int max_num_edges) {
+                                                  size_t max_num_edges) {
     utility::device_vector<int> indices;
     utility::device_vector<float> weights;
     utility::device_vector<Eigen::Vector2i> new_edges(this->points_.size() *

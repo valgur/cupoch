@@ -117,7 +117,11 @@ LaserScanBuffer::LaserScanBuffer(int num_steps,
       num_steps_(num_steps),
       num_max_scans_(num_max_scans),
       min_angle_(min_angle),
-      max_angle_(max_angle) {}
+      max_angle_(max_angle) {
+    ranges_.reserve(num_steps_ * num_max_scans_);
+    intensities_.reserve(num_steps_ * num_max_scans_);
+    origins_.reserve(num_max_scans_);
+}
 
 LaserScanBuffer::~LaserScanBuffer(){};
 
@@ -186,10 +190,11 @@ LaserScanBuffer& LaserScanBuffer::Clear() {
     bottom_ = 0;
     ranges_.clear();
     intensities_.clear();
+    origins_.clear();
     return *this;
 }
 
-bool LaserScanBuffer::IsEmpty() const { return ranges_.empty(); }
+bool LaserScanBuffer::IsEmpty() const { return bottom_ == top_; }
 
 Eigen::Vector3f LaserScanBuffer::GetMinBound() const {
     utility::LogError("LaserScanBuffer::GetMinBound is not supported");
@@ -246,10 +251,11 @@ LaserScanBuffer& LaserScanBuffer::Rotate(const Eigen::Matrix3f& R,
     return *this;
 }
 
+template <typename ContainerType>
 LaserScanBuffer& LaserScanBuffer::AddRanges(
-        const utility::device_vector<float>& ranges,
+        const ContainerType& ranges,
         const Eigen::Matrix4f& transformation,
-        const utility::device_vector<float>& intensities) {
+        const ContainerType& intensities) {
     if (ranges.size() != num_steps_) {
         utility::LogError("[AddRanges] Invalid size of input ranges.");
         return *this;
@@ -276,25 +282,121 @@ LaserScanBuffer& LaserScanBuffer::AddRanges(
             thrust::copy_n(intensities.begin(), num_steps_,
                            intensities_.begin() + end * num_steps_);
         origins_[end] = transformation;
-        top_++;
+        if (IsFull()) top_++;
         bottom_++;
     }
     return *this;
 }
 
-LaserScanBuffer& LaserScanBuffer::AddRanges(
+template LaserScanBuffer& LaserScanBuffer::AddRanges(
+        const utility::device_vector<float>& range,
+        const Eigen::Matrix4f& transformation,
+        const utility::device_vector<float>& intensities);
+
+template LaserScanBuffer& LaserScanBuffer::AddRanges(
         const utility::pinned_host_vector<float>& ranges,
         const Eigen::Matrix4f& transformation,
-        const utility::pinned_host_vector<float>& intensities) {
-    utility::device_vector<float> d_ranges(ranges.size());
-    cudaSafeCall(cudaMemcpy(thrust::raw_pointer_cast(d_ranges.data()),
-                            ranges.data(), ranges.size() * sizeof(float),
-                            cudaMemcpyHostToDevice));
-    utility::device_vector<float> d_intensities(intensities.size());
-    cudaSafeCall(cudaMemcpy(
-            thrust::raw_pointer_cast(d_intensities.data()), intensities.data(),
-            intensities.size() * sizeof(float), cudaMemcpyHostToDevice));
-    return AddRanges(d_ranges, transformation, d_intensities);
+        const utility::pinned_host_vector<float>& intensities);
+
+
+class ContainerLikePtr {
+public:
+    ContainerLikePtr(const float* data, size_t size) : data_(data), size_(size) {}
+    size_t size() const { return size_; }
+    const float* begin() const { return data_; }
+    const float* end() const { return data_ + size_; }
+    bool empty() const { return size_ == 0; }
+    const float* data_;
+    size_t size_;
+};
+
+
+LaserScanBuffer &LaserScanBuffer::AddRanges(
+        const float *ranges,
+        const Eigen::Matrix4f &transformation,
+        const float *intensities) {
+    return AddRanges(ContainerLikePtr(ranges, num_steps_), transformation,
+                     ContainerLikePtr(intensities, num_steps_));
+}
+
+
+LaserScanBuffer &LaserScanBuffer::Merge(const LaserScanBuffer &other) {
+    if (other.IsEmpty()) {
+        utility::LogError("[Merge] Input buffer is empty.");
+        return *this;
+    }
+    if (other.num_steps_ != num_steps_) {
+        utility::LogError("[Merge] Input buffer has different num_steps.");
+        return *this;
+    }
+    if (other.HasIntensities() != HasIntensities()) {
+        utility::LogError(
+                "[Merge] Input buffer has different intensities.");
+        return *this;
+    }
+    if (other.min_angle_ != min_angle_ || other.max_angle_ != max_angle_) {
+        utility::LogError(
+                "[Merge] Input buffer has different angle range.");
+        return *this;
+    }
+    if (other.bottom_ - other.top_ + bottom_ - top_ > num_max_scans_) {
+        utility::LogError("[Merge] Buffer is full.");
+        return *this;
+    }
+    ranges_.insert(ranges_.end(), other.ranges_.begin(), other.ranges_.end());
+    if (HasIntensities()) {
+        intensities_.insert(intensities_.end(), other.intensities_.begin(),
+                            other.intensities_.end());
+    }
+    origins_.insert(origins_.end(), other.origins_.begin(),
+                    other.origins_.end());
+    bottom_ += other.bottom_ - other.top_;
+    return *this;
+}
+
+std::shared_ptr<LaserScanBuffer> LaserScanBuffer::PopOneScan() {
+    if (IsEmpty()) {
+        utility::LogError("[PopRange] Buffer is empty.");
+        return nullptr;
+    }
+    const int start = top_ % num_max_scans_;
+    auto out = std::make_shared<LaserScanBuffer>(num_steps_, num_max_scans_,
+                                                 min_angle_, max_angle_);
+    out->ranges_.resize(num_steps_);
+    thrust::copy_n(ranges_.begin() + start * num_steps_, num_steps_,
+                   out->ranges_.begin());
+    if (HasIntensities()) {
+        out->intensities_.resize(num_steps_);
+        thrust::copy_n(intensities_.begin() + start * num_steps_, num_steps_,
+                       out->intensities_.begin());
+    }
+    out->origins_.push_back(origins_[start]);
+    out->top_ = 0;
+    out->bottom_ = 1;
+    top_++;
+    return out;
+}
+
+std::pair<std::unique_ptr<utility::pinned_host_vector<float>>, std::unique_ptr<utility::pinned_host_vector<float>>> LaserScanBuffer::PopHostOneScan() {
+    if (IsEmpty()) {
+        utility::LogError("[PopRange] Buffer is empty.");
+        return std::make_pair(std::make_unique<utility::pinned_host_vector<float>>(), std::make_unique<utility::pinned_host_vector<float>>());
+    }
+    const int start = top_ % num_max_scans_;
+    auto out = std::make_unique<utility::pinned_host_vector<float>>(num_steps_);
+    cudaSafeCall(cudaMemcpy(thrust::raw_pointer_cast(out->data()),
+                            thrust::raw_pointer_cast(ranges_.data()) + start * num_steps_,
+                            num_steps_ * sizeof(float), cudaMemcpyDeviceToHost));
+    auto out_intensities = std::make_unique<utility::pinned_host_vector<float>>();
+    if (HasIntensities()) {
+        out_intensities->resize(num_steps_);
+        cudaSafeCall(cudaMemcpy(thrust::raw_pointer_cast(out_intensities->data()),
+                                thrust::raw_pointer_cast(intensities_.data()) + start * num_steps_,
+                                num_steps_ * sizeof(float), cudaMemcpyDeviceToHost));
+    }
+    top_++;
+    cudaSafeCall(cudaDeviceSynchronize());
+    return std::make_pair(std::move(out), std::move(out_intensities));
 }
 
 std::shared_ptr<LaserScanBuffer> LaserScanBuffer::RangeFilter(

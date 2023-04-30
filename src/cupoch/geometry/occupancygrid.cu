@@ -18,6 +18,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  **/
+#include <thrust/unique.h>
+#include <thrust/sort.h>
+#include <thrust/set_operations.h>
 #include <thrust/iterator/discard_iterator.h>
 
 #include "cupoch/geometry/boundingvolume.h"
@@ -287,7 +290,7 @@ OccupancyGrid::OccupancyGrid()
       min_bound_(Eigen::Vector3ui16::Constant(resolution_ / 2)),
       max_bound_(Eigen::Vector3ui16::Constant(resolution_ / 2)) {}
 OccupancyGrid::OccupancyGrid(float voxel_size,
-                             int resolution,
+                             size_t resolution,
                              const Eigen::Vector3f& origin)
     : DenseGrid<OccupancyVoxel>(Geometry::GeometryType::OccupancyGrid,
                                 voxel_size,

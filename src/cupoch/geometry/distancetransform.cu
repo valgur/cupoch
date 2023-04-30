@@ -260,6 +260,24 @@ struct compute_obstacle_cells_functor {
     };
 };
 
+struct get_index_functor {
+    get_index_functor(float voxel_size, int resolution, const Eigen::Vector3f& origin)
+    : voxel_size_(voxel_size), resolution_(resolution), origin_(origin) {};
+    const float voxel_size_;
+    const int resolution_;
+    const Eigen::Vector3f origin_;
+    __device__ int operator()(const Eigen::Vector3f& query) const {
+        Eigen::Vector3f qv =
+                (query - origin_ +
+                 0.5 * voxel_size_ * Eigen::Vector3f::Constant(resolution_)) /
+                voxel_size_;
+        Eigen::Vector3i idx =
+                Eigen::device_vectorize<float, 3, ::floor>(qv.array())
+                        .cast<int>();
+        return IndexOf(idx, resolution_);
+    };
+};
+
 }  // namespace
 
 template class DenseGrid<DistanceVoxel>;
@@ -273,7 +291,7 @@ DistanceTransform::DistanceTransform()
 }
 
 DistanceTransform::DistanceTransform(float voxel_size,
-                                     int resolution,
+                                     size_t resolution,
                                      const Eigen::Vector3f& origin)
     : DenseGrid<DistanceVoxel>(Geometry::GeometryType::DistanceTransform,
                                voxel_size,
@@ -293,7 +311,7 @@ DistanceTransform::DistanceTransform(const DistanceTransform& other)
 DistanceTransform::~DistanceTransform() {}
 
 DistanceTransform& DistanceTransform::Reconstruct(float voxel_size,
-                                                  int resolution) {
+                                                  size_t resolution) {
     DenseGrid::Reconstruct(voxel_size, resolution);
     buffer_.resize(voxels_.size());
     return *this;
@@ -400,20 +418,10 @@ float DistanceTransform::GetDistance(const Eigen::Vector3f& query) const {
     return v.distance_;
 }
 
-utility::device_vector<float> DistanceTransform::GetDistances(
+std::unique_ptr<utility::device_vector<float>> DistanceTransform::GetDistances(
         const utility::device_vector<Eigen::Vector3f>& queries) const {
-    auto func = [voxel_size = voxel_size_, resolution = resolution_,
-                 origin = origin_] __device__(const Eigen::Vector3f& query) {
-        Eigen::Vector3f qv =
-                (query - origin +
-                 0.5 * voxel_size * Eigen::Vector3f::Constant(resolution)) /
-                voxel_size;
-        Eigen::Vector3i idx =
-                Eigen::device_vectorize<float, 3, ::floor>(qv.array())
-                        .cast<int>();
-        return IndexOf(idx, resolution);
-    };
-    utility::device_vector<float> dists(queries.size());
+    auto func = get_index_functor(voxel_size_, resolution_, origin_);
+    auto dists = std::make_unique<utility::device_vector<float>>(queries.size());
     thrust::transform(
             thrust::make_permutation_iterator(
                     voxels_.begin(),
@@ -421,7 +429,7 @@ utility::device_vector<float> DistanceTransform::GetDistances(
             thrust::make_permutation_iterator(
                     voxels_.begin(),
                     thrust::make_transform_iterator(queries.end(), func)),
-            dists.begin(),
+            dists->begin(),
             [] __device__(const DistanceVoxel& v) { return v.distance_; });
     return dists;
 }

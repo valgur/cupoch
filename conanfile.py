@@ -10,7 +10,7 @@ required_conan_version = ">=1.50.0"
 
 class CupochConan(ConanFile):
     name = "cupoch"
-    version = "0.2.6"
+    version = "0.2.7.2"
     package_type = "library"
 
     license = "MIT"

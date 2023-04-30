@@ -136,7 +136,7 @@ if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
     # Newer but not listed GPUs will JIT compile on launch.
     set(CMAKE_CUDA_ARCHITECTURES 61)
 endif()
-target_compile_features(cupoch_flags INTERFACE cxx_std_14 $<BUILD_INTERFACE:cuda_std_14>)
+target_compile_features(cupoch_flags INTERFACE cxx_std_17 $<BUILD_INTERFACE:cuda_std_17>)
 target_compile_options(cupoch_flags INTERFACE
     "$<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>"
     "$<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>"

@@ -44,7 +44,7 @@ set(STDGPU_SETUP_COMPILER_FLAGS OFF CACHE INTERNAL "")
 add_subdirectory(stdgpu)
 set_target_properties(stdgpu PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(stdgpu INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src>)
-install(TARGETS stdgpu)
+#install(TARGETS stdgpu)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/stdgpu/src/stdgpu
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.cpp" EXCLUDE PATTERN "*.txt" EXCLUDE)
