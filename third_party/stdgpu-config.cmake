@@ -14,4 +14,4 @@ target_include_directories(stdgpu INTERFACE $<BUILD_INTERFACE:${stdgpu_SOURCE_DI
 #install(TARGETS stdgpu)
 install(DIRECTORY ${stdgpu_SOURCE_DIR}/src/stdgpu
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  FILES_MATCHING PATTERN "*.cpp" EXCLUDE PATTERN "*.txt" EXCLUDE)
+  FILES_MATCHING PATTERN "*.cpp")

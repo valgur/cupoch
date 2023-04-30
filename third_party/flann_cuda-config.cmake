@@ -11,7 +11,6 @@ target_include_directories(flann_cuda_s PUBLIC $<BUILD_INTERFACE:${flann_cuda_SO
 target_compile_definitions(flann_cuda_s PUBLIC FLANN_USE_CUDA)
 target_link_libraries(flann_cuda_s PRIVATE cupoch_flags CUDA::cudart spdlog::spdlog rmm::rmm)
 install(TARGETS flann_cuda_s)
-install(DIRECTORY ${flann_cuda_SOURCE_DIR}
+install(DIRECTORY ${flann_cuda_SOURCE_DIR}/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
-

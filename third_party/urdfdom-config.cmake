@@ -22,8 +22,7 @@ add_library(urdfdom STATIC ${URDFDOM_SOURCES})
 add_library(urdfdom::urdfdom ALIAS urdfdom)
 target_include_directories(urdfdom PUBLIC
   $<BUILD_INTERFACE:${urdfdom_SOURCE_DIR}/urdf_parser/include>
-  $<BUILD_INTERFACE:${urdfdom_SOURCE_DIR}/urdf_parser/include/tinyxml>
-  $<INSTALL_INTERFACE:tinyxml>)
+  $<BUILD_INTERFACE:${urdfdom_SOURCE_DIR}/urdf_parser/include/tinyxml>)
 target_link_libraries(urdfdom PRIVATE console_bridge)
 install(TARGETS urdfdom console_bridge)
 install(DIRECTORY ${urdfdom_SOURCE_DIR}/urdf_parser/include/urdf_parser DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
