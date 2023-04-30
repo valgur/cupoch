@@ -20,7 +20,7 @@
  **/
 #include <thrust/sequence.h>
 #include <thrust/sort.h>
-#include "lbvh_knn.h"
+#include "cupoch/knn/lbvh_knn.h"
 #include <lbvh_index/lbvh_kernels.cuh>
 #include <lbvh_index/query_knn_kernels.cuh>
 
