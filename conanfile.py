@@ -47,7 +47,7 @@ class CupochConan(ConanFile):
         "fPIC": True,
         "use_rmm": True,
     }
-    default_options.update({module: True for module in MODULES})
+    default_options.update({module: False for module in MODULES})
 
     exports_sources = [
         "include/*",
