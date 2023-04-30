@@ -1,5 +1,4 @@
 #include <cupoch/geometry/pointcloud.h>
-#include <cupoch/knn/kdtree_search_param.h>
 #include <cupoch/registration/registration.h>
 
 #include <Eigen/Core>
@@ -7,16 +6,15 @@
 #include <iostream>
 
 int main() {
-    using namespace cupoch::registration;
-    ICPConvergenceCriteria icp_criteria;
-    TransformationEstimationPointToPoint point_to_point;
-    TransformationEstimationPointToPlane point_to_plane;
-    std::vector<Eigen::Vector3f> points = {{0, 0, 0}, {1, 1, 1}, {2, 2, 2}};
-    cupoch::geometry::PointCloud target{points};
-    cupoch::geometry::PointCloud source{points};
-    std::cout << "cupoch ICP setup ran successfully\n";
-    RegistrationResult icp_result = cupoch::registration::RegistrationICP(
-            source, target, 1, Eigen::Isometry3f::Identity().matrix(),
-            point_to_point, icp_criteria);
+    using namespace cupoch;
+    using namespace Eigen;
+    const size_t size = 20;
+    std::vector<Vector3f> points(size);
+    for (int i = 0; i < size; ++i) {
+        points[i] = Vector3f::Random() * 100.0f;
+    }
+    geometry::PointCloud source{points};
+    geometry::PointCloud target{points};
+    auto icp_result = registration::RegistrationICP(source, target, 1);
     std::cout << "cupoch::registration::RegistrationICP() ran successfully\n";
 }
