@@ -152,13 +152,6 @@ if (USE_RMM)
     target_compile_definitions(cupoch_flags INTERFACE USE_RMM)
 endif ()
 
-# 3rd-party projects that are added with external_project_add will be installed
-# with this prefix. E.g.
-# - 3RDPARTY_INSTALL_PREFIX: cupoch/build/3rdparty_install
-# - Headers: cupoch/build/3rdparty_install/include/extern_lib.h
-# - Libraries: cupoch/build/3rdparty_install/lib/extern_lib.a
-set(3RDPARTY_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/3rdparty_install")
-
 ## conan libraries ##
 if(NOT DEFINED CONAN_CXX_FLAGS)
     include(conan_dependencies)
