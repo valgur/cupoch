@@ -93,22 +93,22 @@ class CupochConan(ConanFile):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
-        self.requires("dlpack/0.4", headers=True, libs=True)
-        self.requires("jsoncpp/1.9.5", headers=True, libs=True)
+        self.requires("dlpack/0.4")
+        self.requires("jsoncpp/1.9.5")
 
         modules = self._enabled_modules
         print("Enabled modules:", modules)
         if "io" in modules:
-            self.requires("libjpeg-turbo/2.1.5", headers=True, libs=True)
-            self.requires("libpng/1.6.39", headers=True, libs=True)
-            self.requires("rply/1.1.4", headers=True, libs=True)
-            self.requires("tinyobjloader/1.0.7", headers=True, libs=True)
+            self.requires("libjpeg-turbo/2.1.5")
+            self.requires("libpng/1.6.39")
+            self.requires("rply/1.1.4")
+            self.requires("tinyobjloader/1.0.7")
             # https://github.com/conan-io/conan-center-index/pull/17282
-            # self.requires("liblzf/3.6", headers=True, libs=True)
+            # self.requires("liblzf/3.6")
         if "visualization" in modules:
-            self.requires("glew/2.2.0", headers=True, libs=True)
-            self.requires("glfw/3.3.8", headers=True, libs=True)
-            self.requires("imgui/1.89.4", headers=True, libs=True)
+            self.requires("glew/2.2.0")
+            self.requires("glfw/3.3.8")
+            self.requires("imgui/1.89.4")
 
     def build_requirements(self):
         self.test_requires("gtest/1.13.0")
