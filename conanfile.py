@@ -103,8 +103,9 @@ class CupochConan(ConanFile):
             self.requires("libpng/1.6.39")
             self.requires("rply/1.1.4")
             self.requires("tinyobjloader/1.0.7")
-            # https://github.com/conan-io/conan-center-index/pull/17282
-            # self.requires("liblzf/3.6")
+            self.requires("liblzf/3.6")
+        if "kinematics" in modules:
+            self.requires("urdfdom/3.1.1")
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
@@ -166,8 +167,6 @@ class CupochConan(ConanFile):
     def package_info(self):
         mod_lib_deps = {
             "imageproc": ["sgm"],
-            "io": ["liblzf"],
-            "kinematics": ["console_bridge", "urdfdom"],
             "knn": ["flann_cuda_s"],
         }
         for module in self._enabled_modules:
