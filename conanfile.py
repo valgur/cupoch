@@ -26,7 +26,7 @@ MODULES = sorted(MODULE_DEPS)
 
 class CupochConan(ConanFile):
     name = "cupoch"
-    version = "0.2.7.2"
+    version = "0.2.7.3"
     package_type = "library"
 
     license = "MIT"
