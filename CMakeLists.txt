@@ -153,8 +153,8 @@ if (USE_RMM)
 endif ()
 
 ## conan libraries ##
-if(NOT DEFINED CONAN_CXX_FLAGS)
-    include(conan_dependencies)
+include(conan_dependencies)
+if(NOT BUILD_TRIGGERED_BY_CONAN)
     conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
 endif()
 
