@@ -47,7 +47,7 @@ class CupochConan(ConanFile):
         "fPIC": True,
         "use_rmm": True,
     }
-    default_options.update({module: False for module in MODULES})
+    default_options.update({module: True for module in MODULES})
 
     exports_sources = [
         "include/*",
@@ -88,11 +88,13 @@ class CupochConan(ConanFile):
     def configure(self):
         if self.options.shared:
             del self.options.fPIC
+        self.options["thrust"].device_system = "cuda"
 
     def requirements(self):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
+        self.requires("thrust/1.16.0", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
 

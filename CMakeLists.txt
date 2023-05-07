@@ -32,6 +32,13 @@ option(USE_RMM                   "Use rmm library(fast memory allocator)"   ON)
 option(STATIC_WINDOWS_RUNTIME    "Use static (MT/MTd) Windows runtime"      OFF)
 option(CMAKE_USE_RELATIVE_PATHS  "If true, cmake will use relative paths"   ON)
 
+## conan libraries ##
+include(conan_dependencies)
+if(NOT BUILD_TRIGGERED_BY_CONAN)
+    conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
+endif()
+list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/third_party")
+
 include(GNUInstallDirs)
 if(UNIX)
     set(CUPOCH_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
@@ -129,6 +136,7 @@ elseif (UNIX)
     message(STATUS "Compiling on Unix")
 endif ()
 
+find_package(thrust REQUIRED CONFIG)
 find_package(CUDAToolkit REQUIRED)
 add_library(cupoch_flags INTERFACE)
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
@@ -147,18 +155,11 @@ target_compile_options(cupoch_flags INTERFACE
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=partial_override>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=virtual_function_decl_hidden>"
 )
-target_link_libraries(cupoch_flags INTERFACE CUDA::cudart)
+target_link_libraries(cupoch_flags INTERFACE CUDA::cudart thrust::thrust)
+target_compile_definitions(cupoch_flags INTERFACE THRUST_IGNORE_CUB_VERSION_CHECK)
 if (USE_RMM)
     target_compile_definitions(cupoch_flags INTERFACE USE_RMM)
 endif ()
-
-## conan libraries ##
-include(conan_dependencies)
-if(NOT BUILD_TRIGGERED_BY_CONAN)
-    conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
-endif()
-
-list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/third_party")
 
 find_package(Eigen3 REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
