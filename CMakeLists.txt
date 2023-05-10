@@ -137,6 +137,7 @@ elseif (UNIX)
 endif ()
 
 find_package(thrust REQUIRED CONFIG)
+find_package(stdgpu REQUIRED CONFIG)
 find_package(CUDAToolkit REQUIRED)
 add_library(cupoch_flags INTERFACE)
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)

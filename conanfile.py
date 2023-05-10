@@ -89,12 +89,14 @@ class CupochConan(ConanFile):
         if self.options.shared:
             del self.options.fPIC
         self.options["thrust"].device_system = "cuda"
+        self.options["stdgpu"].backend = "cuda"
 
     def requirements(self):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
-        self.requires("thrust/1.16.0", transitive_headers=True, transitive_libs=True)
+        self.requires("thrust/1.16.0", transitive_headers=True, transitive_libs=True, force=True)
+        self.requires("stdgpu/1.3.0", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
 

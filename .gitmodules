@@ -4,6 +4,3 @@
 [submodule "rmm"]
     path = third_party/rmm
     url = https://github.com/rapidsai/rmm.git
-[submodule "stdgpu"]
-    path = third_party/stdgpu
-    url = https://github.com/stotko/stdgpu.git
