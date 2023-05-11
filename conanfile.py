@@ -93,9 +93,12 @@ class CupochConan(ConanFile):
 
     def _export_local_recipes(self):
         # Export local recipes for dependencies that are not yet available on ConanCenter
-        cache_dir = Path(__file__).parent.parent
-        sources_dir = cache_dir / "es"
-        recipes_root = sources_dir / "third_party" / "conan-recipes"
+        conanfile_dir = Path(__file__).parent
+        recipes_root = conanfile_dir / "third_party" / "conan-recipes"
+        if not recipes_root.is_dir():
+            # Running from Conan cache
+            sources_dir = conanfile_dir.parent / "es"
+            recipes_root = sources_dir / "third_party" / "conan-recipes"
         for pkg_dir in recipes_root.iterdir():
             if pkg_dir.is_dir():
                 self.run(f"conan export {pkg_dir}")
