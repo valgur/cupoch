@@ -18,7 +18,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 **/
-#include "cupoch/cupoch.h"
+#include "cupoch/geometry/trianglemesh.h"
+#include "cupoch/io/class_io/trianglemesh_io.h"
+#include "cupoch/utility/console.h"
+#include "cupoch/utility/helper.h"
+#include "cupoch/visualization/utility/draw_geometry.h"
 
 int main(int argc, char **argv) {
     using namespace cupoch;

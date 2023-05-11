@@ -18,7 +18,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
 **/
-#include "cupoch/cupoch.h"
+#include "cupoch/cupoch_config.h"
+#include "cupoch/geometry/geometry.h"
+#include "cupoch/geometry/pointcloud.h"
+#include "cupoch/geometry/voxelgrid.h"
+#include "cupoch/io/class_io/pointcloud_io.h"
+#include "cupoch/io/class_io/voxelgrid_io.h"
+#include "cupoch/utility/console.h"
+#include "cupoch/utility/helper.h"
+#include "cupoch/visualization/utility/draw_geometry.h"
 
 using namespace cupoch;
 
