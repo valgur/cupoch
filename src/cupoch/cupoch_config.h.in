@@ -1,3 +1,5 @@
+#pragma once
+
 // clang-format off
 // Cupoch version
 #define CUPOCH_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
