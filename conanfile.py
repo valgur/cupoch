@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
@@ -91,7 +91,18 @@ class CupochConan(ConanFile):
         self.options["thrust"].device_system = "cuda"
         self.options["stdgpu"].backend = "cuda"
 
+    def _export_local_recipes(self):
+        # Export local recipes for dependencies that are not yet available on ConanCenter
+        cache_dir = Path(__file__).parent.parent
+        sources_dir = cache_dir / "es"
+        recipes_root = sources_dir / "third_party" / "conan-recipes"
+        for pkg_dir in recipes_root.iterdir():
+            if pkg_dir.is_dir():
+                self.run(f"conan export {pkg_dir}")
+
     def requirements(self):
+        self._export_local_recipes()
+
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
@@ -125,9 +136,7 @@ class CupochConan(ConanFile):
         # The imgui backends are not built by default and need to be copied to the source tree
         imgui_paths = self.dependencies["imgui/1.89.4"].cpp_info.srcdirs
         backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
-        output_dir = os.path.join(
-            self.source_folder, "src/cupoch/visualization/visualizer/imgui/backends"
-        )
+        output_dir = Path(self.source_folder) / "src/cupoch/visualization/visualizer/imgui/backends"
         for backend_file in [
             "imgui_impl_glfw.h",
             "imgui_impl_glfw.cpp",
