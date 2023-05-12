@@ -18,7 +18,7 @@ file(GLOB SGM_SRCS
 add_library(sgm ${SGM_SRCS})
 add_library(sgm::sgm ALIAS sgm)
 target_include_directories(sgm PUBLIC $<BUILD_INTERFACE:${sgm_SOURCE_DIR}/include>)
-target_link_libraries(sgm PRIVATE cupoch_flags CUDA::cudart thrust::thrust)
+target_link_libraries(sgm PRIVATE cupoch::flags CUDA::cudart thrust::thrust)
 install(TARGETS sgm)
 install(DIRECTORY ${sgm_SOURCE_DIR}/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

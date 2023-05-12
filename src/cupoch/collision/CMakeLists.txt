@@ -9,13 +9,14 @@ find_package(tritriintersect REQUIRED CONFIG)
 
 file(GLOB_RECURSE COLLISION_SOURCE_FILES "*.cu")
 add_library(cupoch_collision ${COLLISION_SOURCE_FILES})
+add_library(cupoch::collision ALIAS cupoch_collision)
 target_link_libraries(cupoch_collision
     PUBLIC
-        cupoch_geometry
+        cupoch::geometry
         Eigen3::Eigen
     PRIVATE
-        cupoch_flags
-        cupoch_utility
+        cupoch::flags
+        cupoch::utility
         lbvh::lbvh
         lbvh::lbvh_index
         stdgpu::stdgpu

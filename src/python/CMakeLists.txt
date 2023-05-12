@@ -11,10 +11,11 @@ target_link_libraries(${PACKAGE_NAME} PUBLIC pybind11::pybind11)
 
 add_library(cupoch_wrapper cupoch_pybind/device_vector_wrapper.cu
     cupoch_pybind/device_map_wrapper.cu)
+add_library(cupoch::wrapper ALIAS cupoch_wrapper)
 target_include_directories(cupoch_wrapper PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(cupoch_wrapper PRIVATE cupoch_geometry)
+target_link_libraries(cupoch_wrapper PRIVATE cupoch::geometry)
 
 target_include_directories(${PACKAGE_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -24,12 +25,12 @@ target_include_directories(${PACKAGE_NAME} SYSTEM PRIVATE
     ${PYBIND11_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS}
 )
 
-target_link_libraries(${PACKAGE_NAME} PRIVATE cupoch_registration
-                      cupoch_visualization cupoch_io cupoch_odometry
-                      cupoch_planning cupoch_kinematics cupoch_kinfu
-                      cupoch_collision cupoch_integration
-                      cupoch_imageproc cupoch_geometry
-                      cupoch_utility cupoch_wrapper
+target_link_libraries(${PACKAGE_NAME} PRIVATE cupoch::registration
+                      cupoch::visualization cupoch::io cupoch::odometry
+                      cupoch::planning cupoch::kinematics cupoch::kinfu
+                      cupoch::collision cupoch::integration
+                      cupoch::imageproc cupoch::geometry
+                      cupoch::utility cupoch::wrapper
                       CUDA::cudart)
 if (WIN32)
     target_link_libraries(${PACKAGE_NAME} PRIVATE ${PYTHON_LIBRARIES})

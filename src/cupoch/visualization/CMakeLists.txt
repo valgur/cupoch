@@ -34,16 +34,17 @@ file(GLOB_RECURSE VISUALIZATION_CPP_SOURCE_FILES "*.cpp")
 file(GLOB_RECURSE VISUALIZATION_CUDA_SOURCE_FILES "*.cu")
 # create object library
 add_library(cupoch_visualization ${VISUALIZATION_CUDA_SOURCE_FILES} ${VISUALIZATION_CPP_SOURCE_FILES})
+add_library(cupoch::visualization ALIAS cupoch_visualization)
 add_dependencies(cupoch_visualization shader_file_target)
 target_link_libraries(cupoch_visualization
     PUBLIC
-        cupoch_camera
-        cupoch_geometry
-        cupoch_utility
+        cupoch::camera
+        cupoch::geometry
+        cupoch::utility
         Eigen3::Eigen
         GLEW::GLEW
         glfw
     PRIVATE
-        cupoch_io
+        cupoch::io
         imgui::imgui
 )

@@ -11,12 +11,13 @@ file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 
 # create object library
 add_library(cupoch_knn ${ALL_CUDA_SOURCE_FILES})
+add_library(cupoch::knn ALIAS cupoch_knn)
 target_link_libraries(cupoch_knn
     PUBLIC
-        cupoch_utility
+        cupoch::utility
         Eigen3::Eigen
         lbvh::lbvh_index
         flann::flann_cuda_s
     PRIVATE
-        cupoch_flags
+        cupoch::flags
 )

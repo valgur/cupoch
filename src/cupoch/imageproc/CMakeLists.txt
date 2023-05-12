@@ -7,10 +7,11 @@ find_package(sgm REQUIRED CONFIG)
 
 file(GLOB_RECURSE IMAGEPROC_SOURCE_FILES "*.cpp")
 add_library(cupoch_imageproc ${IMAGEPROC_SOURCE_FILES})
+add_library(cupoch::imageproc ALIAS cupoch_imageproc)
 target_link_libraries(cupoch_imageproc
     PUBLIC
-        cupoch_geometry
+        cupoch::geometry
         sgm::sgm
     PRIVATE
-        cupoch_utility
+        cupoch::utility
 )

@@ -157,6 +157,7 @@ find_package(thrust REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 find_package(CUDAToolkit REQUIRED)
 add_library(cupoch_flags INTERFACE)
+add_library(cupoch::flags ALIAS cupoch_flags)
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
     # Generate for 10xx+ series GPUs by default.
     # Newer but not listed GPUs will JIT compile on launch.
