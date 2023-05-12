@@ -27,10 +27,7 @@ macro(conan_dependencies_file)
 endmacro()
 
 function(_custom_conan_cmake_install)
-    # Make sure we are using a fairly recent version.
-    conan_check(VERSION 1.44 REQUIRED)
-
-    set(CONAN_UPDATE_DEPS ON CACHE BOOL
+    set(CONAN_UPDATE_DEPS OFF CACHE BOOL
         "Install conan dependencies with --update set.
     Note that for dependencies that accept a version range, this will ignore any packages in the local cache.")
     set(update "")
@@ -74,12 +71,15 @@ function(_custom_conan_cmake_install)
             )
     endif()
 
+    set_cupoch_conan_options()
+
     conan_cmake_install(
         PATH_OR_REFERENCE ${ARGV0}
         OUTPUT_FOLDER ${CMAKE_CURRENT_BINARY_DIR}
         PROFILE_BUILD ${CONAN_BUILD_PROFILE}
         PROFILE_HOST ${CONAN_HOST_PROFILE}
         BUILD missing
+        OPTIONS ${CUPOCH_CONAN_OPTIONS}
         ${update}
         ${autodetected}
     )
@@ -92,4 +92,32 @@ function(_custom_conan_cmake_install)
         ${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}/build/${CMAKE_BUILD_TYPE}/generators)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
+endfunction()
+
+
+function(set_cupoch_conan_options)
+    set(CUPOCH_CONAN_OPTIONS)
+    set(modules
+        camera
+        collision
+        geometry
+        imageproc
+        integration
+        io
+        kinematics
+        kinfu
+        knn
+        odometry
+        planning
+        registration
+        visualization
+        )
+    foreach(module ${modules})
+        set(enabled False)
+        if(${BUILD_cupoch_${module}})
+            set(enabled True)
+        endif()
+        list(APPEND CUPOCH_CONAN_OPTIONS "cupoch*:${module}=${enabled}")
+    endforeach()
+    set(CUPOCH_CONAN_OPTIONS "${CUPOCH_CONAN_OPTIONS}" PARENT_SCOPE)
 endfunction()
