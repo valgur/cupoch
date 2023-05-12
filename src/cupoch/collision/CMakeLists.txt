@@ -10,6 +10,7 @@ find_package(tritriintersect REQUIRED CONFIG)
 file(GLOB_RECURSE COLLISION_SOURCE_FILES "*.cu")
 add_library(cupoch_collision ${COLLISION_SOURCE_FILES})
 add_library(cupoch::collision ALIAS cupoch_collision)
+target_compile_definitions(cupoch_collision PUBLIC CUPOCH_COLLISION_ENABLED)
 target_link_libraries(cupoch_collision
     PUBLIC
         cupoch::geometry

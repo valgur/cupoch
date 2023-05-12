@@ -35,6 +35,7 @@ file(GLOB_RECURSE VISUALIZATION_CUDA_SOURCE_FILES "*.cu")
 # create object library
 add_library(cupoch_visualization ${VISUALIZATION_CUDA_SOURCE_FILES} ${VISUALIZATION_CPP_SOURCE_FILES})
 add_library(cupoch::visualization ALIAS cupoch_visualization)
+target_compile_definitions(cupoch_visualization PUBLIC CUPOCH_VISUALIZATION_ENABLED)
 add_dependencies(cupoch_visualization shader_file_target)
 target_link_libraries(cupoch_visualization
     PUBLIC

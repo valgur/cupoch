@@ -16,6 +16,7 @@ set(IO_ALL_SOURCE_FILES ${IO_CPP_SOURCE_FILES} ${IO_CUDA_SOURCE_FILES})
 # Create object library
 add_library(cupoch_io ${IO_ALL_SOURCE_FILES})
 add_library(cupoch::io ALIAS cupoch_io)
+target_compile_definitions(cupoch_io PUBLIC CUPOCH_IO_ENABLED)
 target_link_libraries(cupoch_io
     PUBLIC
         cupoch::geometry

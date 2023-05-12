@@ -12,6 +12,7 @@ file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 # create object library
 add_library(cupoch_knn ${ALL_CUDA_SOURCE_FILES})
 add_library(cupoch::knn ALIAS cupoch_knn)
+target_compile_definitions(cupoch_knn PUBLIC CUPOCH_KNN_ENABLED)
 target_link_libraries(cupoch_knn
     PUBLIC
         cupoch::utility

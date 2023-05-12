@@ -192,6 +192,7 @@ class CupochConan(ConanFile):
             # component.requires = MODULE_DEPS.get(module, [])
             self.cpp_info.libs += [f"cupoch_{module}"]
             self.cpp_info.libs += mod_lib_deps.get(module, [])
+            self.cpp_info.defines.append(f"CUPOCH_{module.upper()}_ENABLED")
         self.cpp_info.libs += ["cupoch_utility"]
 
         # Propagate necessary build flags

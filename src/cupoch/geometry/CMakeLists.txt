@@ -9,6 +9,7 @@ find_package(tritriintersect REQUIRED CONFIG)
 file(GLOB_RECURSE GEOMETRY_SOURCE_FILES "*.cu")
 add_library(cupoch_geometry ${GEOMETRY_SOURCE_FILES})
 add_library(cupoch::geometry ALIAS cupoch_geometry)
+target_compile_definitions(cupoch_geometry PUBLIC CUPOCH_GEOMETRY_ENABLED)
 target_link_libraries(cupoch_geometry
     PUBLIC
         cupoch::utility

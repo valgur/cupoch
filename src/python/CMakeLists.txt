@@ -12,6 +12,7 @@ target_link_libraries(${PACKAGE_NAME} PUBLIC pybind11::pybind11)
 add_library(cupoch_wrapper cupoch_pybind/device_vector_wrapper.cu
     cupoch_pybind/device_map_wrapper.cu)
 add_library(cupoch::wrapper ALIAS cupoch_wrapper)
+target_compile_definitions(cupoch_wrapper PUBLIC CUPOCH_WRAPPER_ENABLED)
 target_include_directories(cupoch_wrapper PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

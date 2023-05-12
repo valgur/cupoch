@@ -11,6 +11,7 @@ file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 # create object library
 add_library(cupoch_integration ${ALL_CUDA_SOURCE_FILES})
 add_library(cupoch::integration ALIAS cupoch_integration)
+target_compile_definitions(cupoch_integration PUBLIC CUPOCH_INTEGRATION_ENABLED)
 target_link_libraries(cupoch_integration
     PUBLIC
         cupoch::camera
