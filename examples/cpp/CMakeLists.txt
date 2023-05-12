@@ -1,4 +1,10 @@
 macro(EXAMPLE_CPP EXAMPLE_CPP_NAME)
+    foreach(module ${ARGN})
+        if(NOT BUILD_${module})
+            message(STATUS "Skipping example ${EXAMPLE_CPP_NAME} because ${module} is not enabled")
+        return()
+        endif()
+    endforeach()
     add_executable(${EXAMPLE_CPP_NAME} "${EXAMPLE_CPP_NAME}.cpp")
     target_link_libraries(${EXAMPLE_CPP_NAME} PRIVATE ${ARGN})
     set_target_properties(${EXAMPLE_CPP_NAME} PROPERTIES
