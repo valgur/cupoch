@@ -63,9 +63,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Utilities",
     ],
-    description=[
-        "Cupoch: Robotics with GPU computing"
-    ],
+    description="Cupoch: Robotics with GPU computing",
     cmdclass=cmdclass,
     install_requires=install_requires,
     include_package_data=True,
