@@ -1,4 +1,3 @@
-option(BUILD_cupoch_io "Include cupoch_io module in the build" TRUE)
 if(NOT BUILD_cupoch_io)
   return()
 endif()

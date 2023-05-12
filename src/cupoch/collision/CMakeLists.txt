@@ -1,4 +1,3 @@
-option(BUILD_cupoch_collision "Include cupoch_collision module in the build" TRUE)
 if(NOT BUILD_cupoch_collision)
   return()
 endif()

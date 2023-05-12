@@ -1,4 +1,3 @@
-option(BUILD_cupoch_planning "Include cupoch_planning module in the build" TRUE)
 if(NOT BUILD_cupoch_planning)
   return()
 endif()

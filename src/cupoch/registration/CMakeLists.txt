@@ -1,4 +1,3 @@
-option(BUILD_cupoch_registration "Include cupoch_registration module in the build" TRUE)
 if(NOT BUILD_cupoch_registration)
   return()
 endif()

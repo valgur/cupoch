@@ -1,4 +1,3 @@
-option(BUILD_cupoch_kinematics "Include cupoch_kinematics module in the build" TRUE)
 if(NOT BUILD_cupoch_kinematics)
   return()
 endif()

@@ -1,4 +1,3 @@
-option(BUILD_cupoch_camera "Include cupoch_camera module in the build" TRUE)
 if(NOT BUILD_cupoch_camera)
     return()
 endif()

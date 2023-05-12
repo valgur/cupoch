@@ -1,4 +1,3 @@
-option(BUILD_cupoch_integration "Include cupoch_integration module in the build" TRUE)
 if(NOT BUILD_cupoch_integration)
   return()
 endif()

@@ -1,4 +1,3 @@
-option(BUILD_cupoch_geometry "Include cupoch_geometry module in the build" TRUE)
 if(NOT BUILD_cupoch_geometry)
   return()
 endif()

@@ -1,4 +1,3 @@
-option(BUILD_cupoch_imageproc "Include cupoch_imageproc module in the build" TRUE)
 if(NOT BUILD_cupoch_imageproc)
   return()
 endif()

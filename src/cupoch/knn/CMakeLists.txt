@@ -1,4 +1,3 @@
-option(BUILD_cupoch_knn "Include cupoch_knn module in the build" TRUE)
 if(NOT BUILD_cupoch_knn)
   return()
 endif()

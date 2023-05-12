@@ -1,4 +1,3 @@
-option(BUILD_cupoch_visualization "Include cupoch_visualization module in the build" TRUE)
 if(NOT BUILD_cupoch_visualization)
     return()
 endif()

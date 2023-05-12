@@ -1,4 +1,3 @@
-option(BUILD_cupoch_kinfu "Include cupoch_kinfu module in the build" TRUE)
 if(NOT BUILD_cupoch_kinfu)
   return()
 endif()
