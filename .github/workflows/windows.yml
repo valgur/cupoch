@@ -17,17 +17,11 @@ jobs:
         include:
           # Windows2019 & VS 2019 supports 11.0+
           - os: windows-2019
-            cuda: "11.2.0"
             visual_studio: "Visual Studio 16 2019"
             python-version: "3.8"
           - os: windows-2019
-            cuda: "11.2.0"
             visual_studio: "Visual Studio 16 2019"
-            python-version: "3.9"
-          - os: windows-2019
-            cuda: "11.2.0"
-            visual_studio: "Visual Studio 16 2019"
-            python-version: "3.10"
+            python-version: "3.11"
     env:
       build_dir: "build"
       config: "Release"
@@ -47,10 +41,10 @@ jobs:
       run: pip install -U conan
 
     - name: Install CUDA 
-      uses: Jimver/cuda-toolkit@v0.2.8
+      uses: Jimver/cuda-toolkit@v0.2.10
       id: cuda-toolkit
       with:
-        cuda: '11.7.0'
+        cuda: '12.1.0'
 
     - name: nvcc check
       shell: powershell
@@ -65,7 +59,7 @@ jobs:
       run: cmake --version
 
     - name: Conan dependencies
-      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install
 
     - name: Configure CMake
       id: configure
@@ -96,7 +90,7 @@ jobs:
           python -m pip install -U pip wheel setuptools
           cmake --build . --config ${{ env.config }} --target pip-package --verbose
     - name: Publish package
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && matrix.cuda == '11.2.0'
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       working-directory: ${{ env.build_dir }}/lib/python_package
       env:
         PYPI_USERNAME: ${{ secrets.pypi_username }}
