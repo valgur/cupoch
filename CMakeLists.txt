@@ -48,6 +48,7 @@ option(BUILD_cupoch_visualization "Include cupoch_visualization module in the bu
 
 ## conan libraries ##
 include(conan_dependencies)
+set(CMAKE_CXX_STANDARD 17) # for the autodetected Conan profile
 if(NOT BUILD_TRIGGERED_BY_CONAN)
     conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
     if(BUILD_PYTHON_MODULE)
