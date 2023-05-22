@@ -60,6 +60,9 @@ function(_custom_conan_cmake_install)
     endif()
 
     if(AUTODETECT_SETTINGS)
+        # Create a default profile if it does not exist.
+        conan_check()
+        execute_process(COMMAND ${CONAN_CMD} profile detect ERROR_QUIET)
         conan_cmake_autodetect(conan_settings conan_conf)
         message(STATUS "Conan autodetected settings: '${conan_settings}'")
         message(STATUS "Conan autodetected conf : '${conan_conf}'")
