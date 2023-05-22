@@ -2,10 +2,10 @@ name: Windows
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ci ]
     tags: ['v*']
   pull_request:
-    branches: [ master ]
+    branches: [ master, ci ]
 
 jobs:
   build:
