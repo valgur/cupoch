@@ -202,6 +202,5 @@ class CupochConan(ConanFile):
             self.cpp_info.defines.append("_CRT_SECURE_NO_DEPRECATE")
             self.cpp_info.defines.append("_CRT_NONSTDC_NO_DEPRECATE")
             self.cpp_info.defines.append("_SCL_SECURE_NO_WARNINGS")
-            self.cpp_info.defines.append("GLEW_STATIC")
             self.cpp_info.defines.append("THRUST_CPP11_REQUIRED_NO_ERROR")
             self.cpp_info.defines.append("NOMINMAX")
