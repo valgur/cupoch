@@ -159,7 +159,7 @@ class CupochConan(ConanFile):
         tc.cache_variables["BUILD_UNIT_TESTS"] = self._with_unit_tests
         tc.cache_variables["BUILD_EXAMPLES"] = False
         tc.cache_variables["BUILD_PYTHON_MODULE"] = False
-        tc.cache_variables["USE_RMM"] = self.options.use_rmm
+        tc.cache_variables["USE_RMM"] = self.options.get_safe("use_rmm", False)
         for module in MODULES:
             tc.cache_variables[f"BUILD_cupoch_{module}"] = module in self._enabled_modules
         tc.generate()
