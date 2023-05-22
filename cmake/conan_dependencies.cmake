@@ -91,9 +91,7 @@ function(_custom_conan_cmake_install)
     # Prepend to prioritize conan packages over system ones.
     # Multiple paths are added due to the output directory of the generator depending on
     # the layout() config in the used conanfile.py.
-    list(PREPEND CMAKE_PREFIX_PATH
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/build/${CMAKE_BUILD_TYPE}/generators)
+    list(PREPEND CMAKE_PREFIX_PATH ${CONAN_GENERATORS_FOLDER})
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
 endfunction()
 

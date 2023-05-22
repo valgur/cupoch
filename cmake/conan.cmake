@@ -581,7 +581,7 @@ function(conan_cmake_install)
                               ${OUTPUT_FOLDER} ${GENERATOR} ${BUILD}
                               ${OPTIONS} ${OPTIONS_HOST} ${OPTIONS_BUILD} ${PROFILE} ${PROFILE_HOST}
                               ${PROFILE_BUILD} ${SETTINGS} ${SETTINGS_HOST} ${SETTINGS_BUILD}
-                              ${CONF_HOST} ${CONF_BUILD})
+                              ${CONF_HOST} ${CONF_BUILD} --format=json)
 
     string(REPLACE ";" " " _install_args "${install_args}")
     message(STATUS "Conan executing: ${CONAN_CMD} ${_install_args}")
@@ -595,6 +595,8 @@ function(conan_cmake_install)
 
     execute_process(COMMAND ${CONAN_CMD} ${install_args}
                     RESULT_VARIABLE return_code
+                    OUTPUT_VARIABLE conan_stdout
+                    ERROR_VARIABLE conan_stderr
                     ${OUTPUT_OPT}
                     ${ERROR_OPT}
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -605,6 +607,10 @@ function(conan_cmake_install)
         else()
             message(FATAL_ERROR "Conan install failed='${return_code}'")
         endif()
+    else()
+        string(REGEX MATCH "\"generators_folder\": *\"([^\"]*)\"" MATCHED_PATH "${conan_stdout}")
+        string(REGEX REPLACE "\"generators_folder\": *\"([^\"]*)\"" "\\1" CONAN_GENERATORS_FOLDER "${MATCHED_PATH}")
+        set(CONAN_GENERATORS_FOLDER "${CONAN_GENERATORS_FOLDER}" PARENT_SCOPE)
     endif()
 
 endfunction()
