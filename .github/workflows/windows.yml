@@ -41,12 +41,12 @@ jobs:
       shell: bash
       run: cmake --version
 
-    - name: Install conan
+    - name: Install Conan
       shell: bash
-      run: pip install -U conan
-
-    - name: Conan dependencies
-      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install
+      run: |
+        pip install -U conan
+        echo 'tools.system.package_manager:mode=install' > global.conf
+        conan config install global.conf
 
     - name: Install CUDA
       uses: Jimver/cuda-toolkit@v0.2.10

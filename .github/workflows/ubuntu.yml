@@ -30,13 +30,14 @@ jobs:
     - name: Install dependencies
       run: |
         ./scripts/actions/install_deps_ubuntu.sh
-        python -m pip install -U pip wheel setuptools conan
+        python -m pip install -U pip wheel setuptools
 
-    - name: Conan dependencies
+    - name: Install Conan
+      shell: bash
       run: |
-        mkdir build
-        cd build
-        conan install .. -of . -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+        pip install -U conan
+        echo $'tools.system.package_manager:mode=install\ntools.system.package_manager:sudo=True' > global.conf
+        conan config install global.conf
 
     - name: Install CUDA
       uses: Jimver/cuda-toolkit@v0.2.10
@@ -48,7 +49,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cd build
+        mkdir build && cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
