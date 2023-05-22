@@ -28,23 +28,32 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: CMake version
+      shell: bash
+      run: cmake --version
 
     - name: Install conan
       shell: bash
       run: pip install -U conan
 
-    - name: Install CUDA 
+    - name: Conan dependencies
+      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install
+
+    - name: Install CUDA
       uses: Jimver/cuda-toolkit@v0.2.10
       id: cuda-toolkit
       with:
         cuda: '12.1.0'
+        sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
 
     - name: nvcc check
       shell: powershell
@@ -53,13 +62,6 @@ jobs:
         ls $env:CUDA_PATH
         ls $env:CUDA_PATH\bin
         ls $env:CUDA_PATH\include
-
-    - name: cmake version
-      shell: bash
-      run: cmake --version
-
-    - name: Conan dependencies
-      run: conan install . -of ${{ env.build_dir }} -c tools.system.package_manager:mode=install
 
     - name: Configure CMake
       id: configure
@@ -81,14 +83,17 @@ jobs:
             cat CMakeFiles/CMakeError.log
             echo "----"
           fi
+
     - name: Build
       working-directory: ${{ env.build_dir }}
       run: cmake --build . --config ${{ env.config }} --target ALL_BUILD --verbose
+
     - name: Build package
       working-directory: ${{ env.build_dir }}
       run: |
           python -m pip install -U pip wheel setuptools
           cmake --build . --config ${{ env.config }} --target pip-package --verbose
+
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       working-directory: ${{ env.build_dir }}/lib/python_package

@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -19,40 +18,54 @@ jobs:
 
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install CUDA 
-      uses: Jimver/cuda-toolkit@v0.2.10
-      id: cuda-toolkit
-      with:
-        cuda: '12.1.0'
+
     - name: Install dependencies
       run: |
         ./scripts/actions/install_deps_ubuntu.sh
         python -m pip install -U pip wheel setuptools conan
+
     - name: Conan dependencies
       run: |
         mkdir build
         cd build
         conan install .. -of . -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
-    - name: CMake
+
+    - name: Install CUDA
+      uses: Jimver/cuda-toolkit@v0.2.10
+      id: cuda-toolkit
+      with:
+        cuda: '12.1.0'
+        method: 'network'
+        sub-packages: '["compiler"]'
+
+    - name: Configure CMake
       run: |
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
-    - name: make
+
+    - name: Build
       run: |
         cd build
-        make
-        make pip-package
+        cmake --build . --verbose
+
+    - name: Build package
+      run: |
+        cd build
+        cmake --build . --target pip-package --verbose
+
     - name: Rename package
       run: |
         cd build/lib/python_package/pip_package
         rename s/linux/manylinux1/ *.whl
+
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       env:
