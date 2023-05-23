@@ -5,9 +5,10 @@ set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_visualization PARENT_SCOPE)
 
 file(GLOB SHADER_FILES "shader/glsl/*.glsl")
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 add_custom_command(
     OUTPUT ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/shader.h
-    COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/encode_shader.py shader.h
+    COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/encode_shader.py shader.h
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/
     DEPENDS ${SHADER_FILES}
 )
@@ -15,12 +16,12 @@ add_custom_command(
 foreach(file ${SHADER_FILES})
     add_custom_command(
         OUTPUT ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/shader.h
-        COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/encode_shader.py shader.h ${file}
+        COMMAND ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/encode_shader.py shader.h ${file}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/
         DEPENDS ${SHADER_FILES}
         APPEND
     )
-endforeach(file)
+endforeach()
 
 add_custom_target(shader_file_target ALL
                   DEPENDS ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/shader.h)
