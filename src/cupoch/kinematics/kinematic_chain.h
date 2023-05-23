@@ -19,6 +19,11 @@
  * IN THE SOFTWARE.
  **/
 #pragma once
+
+// urdf_sensor/sensor.h uses 'near' and 'far' as variable names,
+// which are defines used by windef.h, and will cause the build to fail.
+#undef near
+#undef far
 #include <urdf_parser/urdf_parser.h>
 
 #include <unordered_map>
