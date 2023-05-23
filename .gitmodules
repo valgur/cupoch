@@ -1,6 +1,3 @@
 [submodule "libSGM"]
     path = third_party/libSGM
     url = https://github.com/fixstars/libSGM.git
-[submodule "rmm"]
-    path = third_party/rmm
-    url = https://github.com/rapidsai/rmm.git

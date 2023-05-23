@@ -114,6 +114,9 @@ class CupochConan(ConanFile):
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
 
+        if self.options.get_safe("use_rmm", False):
+            self.requires("rmm/23.04.00", transitive_headers=True, transitive_libs=True)
+
         modules = self._enabled_modules
         print("Enabled modules:", modules)
         if "io" in modules:
