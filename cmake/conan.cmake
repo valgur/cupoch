@@ -412,90 +412,6 @@ macro(conan_parse_arguments)
     cmake_parse_arguments(ARGUMENTS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 endmacro()
 
-function(old_conan_cmake_install)
-    # Calls "conan install"
-    # Argument BUILD is equivalent to --build={missing, PkgName,...} or
-    # --build when argument is 'BUILD all' (which builds all packages from source)
-    # Argument CONAN_COMMAND, to specify the conan path, e.g. in case of running from source
-    # cmake does not identify conan as command, even if it is +x and it is in the path
-    conan_parse_arguments(${ARGV})
-
-    if(CONAN_CMAKE_MULTI)
-        set(ARGUMENTS_GENERATORS ${ARGUMENTS_GENERATORS} cmake_multi)
-    else()
-        set(ARGUMENTS_GENERATORS ${ARGUMENTS_GENERATORS} cmake)
-    endif()
-
-    set(CONAN_BUILD_POLICY "")
-    foreach(ARG ${ARGUMENTS_BUILD})
-        if(${ARG} STREQUAL "all")
-            set(CONAN_BUILD_POLICY ${CONAN_BUILD_POLICY} --build)
-            break()
-        else()
-            set(CONAN_BUILD_POLICY ${CONAN_BUILD_POLICY} --build=${ARG})
-        endif()
-    endforeach()
-    if(ARGUMENTS_CONAN_COMMAND)
-        set(CONAN_CMD ${ARGUMENTS_CONAN_COMMAND})
-    else()
-        conan_check(REQUIRED)
-    endif()
-    set(CONAN_OPTIONS "")
-    if(ARGUMENTS_CONANFILE)
-        if(IS_ABSOLUTE ${ARGUMENTS_CONANFILE})
-            set(CONANFILE ${ARGUMENTS_CONANFILE})
-        else()
-            set(CONANFILE ${CMAKE_CURRENT_SOURCE_DIR}/${ARGUMENTS_CONANFILE})
-        endif()
-    else()
-        set(CONANFILE ".")
-    endif()
-    foreach(ARG ${ARGUMENTS_OPTIONS})
-        set(CONAN_OPTIONS ${CONAN_OPTIONS} -o=${ARG})
-    endforeach()
-    if(ARGUMENTS_UPDATE)
-        set(CONAN_INSTALL_UPDATE --update)
-    endif()
-    if(ARGUMENTS_NO_IMPORTS)
-        set(CONAN_INSTALL_NO_IMPORTS --no-imports)
-    endif()
-    set(CONAN_INSTALL_FOLDER "")
-    if(ARGUMENTS_INSTALL_FOLDER)
-        set(CONAN_INSTALL_FOLDER -if=${ARGUMENTS_INSTALL_FOLDER})
-    endif()
-    set(CONAN_OUTPUT_FOLDER "")
-    if(ARGUMENTS_OUTPUT_FOLDER)
-        set(CONAN_OUTPUT_FOLDER -of=${ARGUMENTS_OUTPUT_FOLDER})
-    endif()
-    foreach(ARG ${ARGUMENTS_GENERATORS})
-        set(CONAN_GENERATORS ${CONAN_GENERATORS} -g=${ARG})
-    endforeach()
-    foreach(ARG ${ARGUMENTS_ENV})
-        set(CONAN_ENV_VARS ${CONAN_ENV_VARS} -e=${ARG})
-    endforeach()
-    set(conan_args install ${CONANFILE} ${settings} ${CONAN_ENV_VARS} ${CONAN_GENERATORS} ${CONAN_BUILD_POLICY} ${CONAN_INSTALL_UPDATE} ${CONAN_INSTALL_NO_IMPORTS} ${CONAN_OPTIONS} ${CONAN_INSTALL_FOLDER} ${ARGUMENTS_INSTALL_ARGS})
-
-    string(REPLACE ";" " " _conan_args "${conan_args}")
-    message(STATUS "Conan executing: ${CONAN_CMD} ${_conan_args}")
-
-    if(ARGUMENTS_OUTPUT_QUIET)
-        execute_process(COMMAND ${CONAN_CMD} ${conan_args}
-                        RESULT_VARIABLE return_code
-                        OUTPUT_VARIABLE conan_output
-                        ERROR_VARIABLE conan_output
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    else()
-        execute_process(COMMAND ${CONAN_CMD} ${conan_args}
-                        RESULT_VARIABLE return_code
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-
-    if(NOT "${return_code}" STREQUAL "0")
-        message(FATAL_ERROR "Conan install failed='${return_code}'")
-    endif()
-
-endfunction()
-
 function(conan_cmake_install)
     if(DEFINED CONAN_COMMAND)
         set(CONAN_CMD ${CONAN_COMMAND})
@@ -595,10 +511,14 @@ function(conan_cmake_install)
     message(STATUS "Conan executing: ${CONAN_CMD} ${_install_args}")
 
     if(ARGS_OUTPUT_QUIET)
-      set(OUTPUT_OPT OUTPUT_QUIET)
+        set(OUTPUT_OPT OUTPUT_QUIET)
+    else()
+        set(OUTPUT_OPT ECHO_OUTPUT_VARIABLE)
     endif()
     if(ARGS_ERROR_QUIET)
-      set(ERROR_OPT ERROR_QUIET)
+        set(ERROR_OPT ERROR_QUIET)
+    else()
+        set(ERROR_OPT ECHO_ERROR_VARIABLE)
     endif()
 
     execute_process(COMMAND ${CONAN_CMD} ${install_args}
