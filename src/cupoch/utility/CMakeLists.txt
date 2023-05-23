@@ -3,7 +3,6 @@ set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_utility PARENT_SCOPE)
 find_package(dlpack REQUIRED CONFIG)
 find_package(jsoncpp REQUIRED CONFIG)
 find_package(OpenGL REQUIRED)
-find_package(rmm REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 
 file(GLOB_RECURSE ALL_CPP_SOURCE_FILES "*.cpp")
@@ -17,9 +16,13 @@ target_link_libraries(cupoch_utility
         dlpack::dlpack
         Eigen3::Eigen
         JsonCpp::JsonCpp
-        rmm::rmm
         stdgpu::stdgpu
     PRIVATE
         OpenGL::GL
         spdlog::spdlog
 )
+
+if(USE_RMM)
+    find_package(rmm REQUIRED CONFIG)
+    target_link_libraries(cupoch_utility PUBLIC rmm::rmm)
+endif()
