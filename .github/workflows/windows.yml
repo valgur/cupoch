@@ -53,7 +53,7 @@ jobs:
       id: cuda-toolkit
       with:
         cuda: '12.1.0'
-        sub-packages: '["nvcc", "cudart", "cublas", "visual_studio_integration"]'
+#        sub-packages: '["nvcc", "cudart", "cublas", "visual_studio_integration"]'
 
     - name: nvcc check
       shell: powershell
