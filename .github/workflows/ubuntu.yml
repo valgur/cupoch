@@ -45,6 +45,7 @@ jobs:
       with:
         cuda: '12.1.0'
         method: 'network'
+        # 'libraries' is required for 'libcublas-dev'
         sub-packages: '["compiler", "libraries"]'
 
     - name: Configure CMake
