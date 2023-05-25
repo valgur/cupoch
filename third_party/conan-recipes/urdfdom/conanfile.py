@@ -61,7 +61,7 @@ class PackageConan(ConanFile):
 
     def requirements(self):
         self.requires("tinyxml/2.6.2", transitive_headers=True, transitive_libs=True)
-        self.requires("console_bridge/1.0.2")
+        self.requires("console_bridge/1.0.2@cupoch")
 
     def validate(self):
         if self.settings.compiler.cppstd:

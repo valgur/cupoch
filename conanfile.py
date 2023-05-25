@@ -101,7 +101,7 @@ class CupochConan(ConanFile):
             recipes_root = sources_dir / "third_party" / "conan-recipes"
         for pkg_dir in recipes_root.iterdir():
             if pkg_dir.is_dir():
-                self.run(f"conan export {pkg_dir}")
+                self.run(f"conan export {pkg_dir} --user cupoch")
 
     def requirements(self):
         self._export_local_recipes()
@@ -109,13 +109,14 @@ class CupochConan(ConanFile):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
-        self.requires("thrust/1.16.0", transitive_headers=True, transitive_libs=True, force=True)
-        self.requires("stdgpu/cci.20230507", transitive_headers=True, transitive_libs=True)
+        self.requires("thrust/1.16.0@cupoch", transitive_headers=True, transitive_libs=True,
+                      force=True)
+        self.requires("stdgpu/cci.20230507@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
 
         if self.options.get_safe("use_rmm", False):
-            self.requires("rmm/23.04.00", transitive_headers=True, transitive_libs=True)
+            self.requires("rmm/23.04.00@cupoch", transitive_headers=True, transitive_libs=True)
 
         modules = self._enabled_modules
         print("Enabled modules:", modules)
@@ -126,7 +127,7 @@ class CupochConan(ConanFile):
             self.requires("tinyobjloader/1.0.7")
             self.requires("liblzf/3.6")
         if "kinematics" in modules:
-            self.requires("urdfdom/3.1.1")
+            self.requires("urdfdom/3.1.1@cupoch")
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")

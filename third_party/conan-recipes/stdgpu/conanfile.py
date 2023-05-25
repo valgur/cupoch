@@ -94,7 +94,7 @@ class StdgpuConan(ConanFile):
         if self.options.backend != "hip":
             # HIP support requires Thrust provided with ROCm.
             # The main version provided by Nvidia found in Conan is not compatible.
-            self.requires("thrust/1.17.2", transitive_headers=True, transitive_libs=True)
+            self.requires("thrust/1.17.2@cupoch")
 
     def validate(self):
         if self.settings.compiler.cppstd:
