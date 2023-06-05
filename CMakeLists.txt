@@ -52,7 +52,7 @@ set(CMAKE_CXX_STANDARD 17) # for the autodetected Conan profile
 if(NOT BUILD_TRIGGERED_BY_CONAN)
     conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
     if(BUILD_PYTHON_MODULE)
-        conan_dependencies(pybind11/2.10.1)
+        conan_dependencies(pybind11/2.10.4)
     endif()
 endif()
 list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/third_party")
