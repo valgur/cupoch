@@ -16,7 +16,7 @@ target_compile_definitions(cupoch_wrapper PUBLIC CUPOCH_WRAPPER_ENABLED)
 target_include_directories(cupoch_wrapper PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(cupoch_wrapper PRIVATE cupoch::geometry)
+target_link_libraries(cupoch_wrapper PRIVATE cupoch::geometry cupoch::flags)
 
 target_include_directories(${PACKAGE_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -32,7 +32,7 @@ target_link_libraries(${PACKAGE_NAME} PRIVATE cupoch::registration
                       cupoch::collision cupoch::integration
                       cupoch::imageproc cupoch::geometry
                       cupoch::utility cupoch::wrapper
-                      CUDA::cudart)
+                      cupoch::flags)
 if (WIN32)
     target_link_libraries(${PACKAGE_NAME} PRIVATE ${PYTHON_LIBRARIES})
 endif ()
