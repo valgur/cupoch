@@ -68,6 +68,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if (NOT BUILD_SHARED_LIBS)
+    set(CMAKE_C_VISIBILITY_PRESET "hidden")
+    set(CMAKE_CXX_VISIBILITY_PRESET "hidden")
+    set(CMAKE_CUDA_VISIBILITY_PRESET "hidden")
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+endif ()
+
 if (WIN32)
     # can't hide the unit testing option on Windows only
     # as a precaution: disable unit testing on Windows regardless of user input
@@ -83,12 +93,12 @@ if (WIN32)
         message(STATUS "Compiling with MSVC")
         add_definitions(-DNOMINMAX)
         add_definitions(-D_USE_MATH_DEFINES)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /Zc:__cplusplus /bigobj /std:c++17")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /Zc:__cplusplus /bigobj")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D _ENABLE_EXTENDED_ALIGNED_STORAGE")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
         set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} --no-host-device-move-forward)
-    endif (MSVC)
+    endif ()
     if (STATIC_WINDOWS_RUNTIME)
         set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     else ()
@@ -99,46 +109,16 @@ if (WIN32)
     message(STATUS "CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE}")
     message(STATUS "CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif (CYGWIN)
-    SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     message(STATUS "Compiling on Cygwin")
-    # enable c++17
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
     add_definitions(-DCYGWIN)
-elseif (APPLE)
+    add_compile_options($<$<CONFIG:Debug>:-O3>)
+elseif (UNIX OR APPLE)
     add_definitions(-DUNIX)
-    # enable c++17
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
     add_compile_options(-Wno-deprecated-declarations)
-    if (NOT BUILD_SHARED_LIBS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-    endif (NOT BUILD_SHARED_LIBS)
     # In Release build -O3 will be added automatically by CMake
     # We still enable -O3 at Debug build to optimize performance
-    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-    if (uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-        add_compile_options(-O3)
-    endif()
-elseif (UNIX)
-    add_definitions(-DUNIX)
-    # TODO: replace these with CMake properties:
-    # - POSITION_INDEPENDENT_CODE
-    # - CXX_STANDARD
-    # - CMAKE_CXX_VISIBILITY_PRESET
-    # enable c++17
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC")
-    if (NOT BUILD_SHARED_LIBS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-    endif (NOT BUILD_SHARED_LIBS)
-    add_compile_options(-Wno-deprecated-declarations)
-    # In Release build -O3 will be added automatically by CMake
-    # We still enable -O3 at debug build to optimize performance
-    string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
-    if (uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-        add_compile_options(-O3)
-    endif()
-    # disable BUILD_LIBREALSENSE since it is not fully supported on Linux
-    message(STATUS "Compiling on Unix")
+    add_compile_options($<$<CONFIG:Debug>:-O3>)
 endif ()
 
 find_package(thrust REQUIRED CONFIG)
