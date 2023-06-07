@@ -19,7 +19,6 @@
  * IN THE SOFTWARE.
 **/
 #include <fstream>
-#include <vector>
 
 #include "cupoch/io/class_io/trianglemesh_io.h"
 #include "cupoch/geometry/trianglemesh.h"
@@ -42,11 +41,11 @@ bool ReadTriangleMeshFromSTL(const std::string &filename,
     }
 
     int num_of_triangles;
-    if (myFile) {
-        char header[80] = "";
-        fread(header, sizeof(char), 80, myFile);
-        fread(&num_of_triangles, sizeof(unsigned int), 1, myFile);
-    } else {
+    char header[80] = "";
+    bool ok = true;
+    ok &= fread(header, sizeof(char), 80, myFile) == 80;
+    ok &= fread(&num_of_triangles, sizeof(unsigned int), 1, myFile) == 1;
+    if (!ok) {
         utility::LogWarning("Read STL failed: unable to read header.");
         fclose(myFile);
         return false;
