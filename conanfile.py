@@ -107,7 +107,7 @@ class CupochConan(ConanFile):
         self._export_local_recipes()
 
         # Used by all modules via cupoch_utility
-        self.requires("eigen/3.4.0", transitive_headers=True, transitive_libs=True)
+        self.requires("eigen/3.4.90-pre@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
         self.requires("thrust/1.16.0@cupoch", transitive_headers=True, transitive_libs=True,
                       force=True)

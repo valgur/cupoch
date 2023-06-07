@@ -1,0 +1,4 @@
+sources:
+  "3.4.90-pre":
+    url: "https://gitlab.com/libeigen/eigen/-/archive/7d7576f3262fa15c34d5575637bd8d7ff4a83f16/eigen-7d7576f3262fa15c34d5575637bd8d7ff4a83f16.tar.bz2"
+    sha256: "ee649bf6c173660e523712be6336122fa61e436cdc07a59ac5fa9be0c2e24df9"
