@@ -60,7 +60,7 @@ protected:
             thrust::device_ptr<Eigen::Vector3f> &points,
             thrust::device_ptr<Eigen::Vector3f> &normals,
             thrust::device_ptr<Eigen::Vector4f> &colors) = 0;
-    virtual size_t GetDataSize(const geometry::Geometry &geometry) const = 0;
+    size_t GetDataSize(const geometry::Geometry &geometry) const override = 0;
 
 protected:
     void SetLighting(const ViewControl &view, const RenderOption &option);

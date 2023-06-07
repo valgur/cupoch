@@ -60,7 +60,7 @@ protected:
             const RenderOption &option,
             const ViewControl &view,
             thrust::device_ptr<Eigen::Vector3f> &points) = 0;
-    virtual size_t GetDataSize(const geometry::Geometry &geometry) const = 0;
+    size_t GetDataSize(const geometry::Geometry &geometry) const override = 0;
 
 protected:
     GLuint vertex_position_;

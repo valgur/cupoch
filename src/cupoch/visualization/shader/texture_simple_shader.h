@@ -61,7 +61,7 @@ protected:
                                 thrust::device_ptr<Eigen::Vector3f> &points,
                                 thrust::device_ptr<Eigen::Vector2f> &uvs,
                                 thrust::device_ptr<uint8_t> &texture_image) = 0;
-    virtual size_t GetDataSize(const geometry::Geometry &geometry) const = 0;
+    size_t GetDataSize(const geometry::Geometry &geometry) const override = 0;
     virtual size_t GetTextureSize(const geometry::Geometry &geometry) const = 0;
     virtual size_t GetTextureHeight(
             const geometry::Geometry &geometry) const = 0;

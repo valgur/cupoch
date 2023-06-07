@@ -55,7 +55,7 @@ protected:
                                 const RenderOption &option,
                                 const ViewControl &view,
                                 thrust::device_ptr<uint8_t> &image) = 0;
-    virtual size_t GetDataSize(const geometry::Geometry &geometry) const = 0;
+    size_t GetDataSize(const geometry::Geometry &geometry) const override = 0;
     virtual size_t GetDataHeight(const geometry::Geometry &geometry) const = 0;
     virtual size_t GetDataWidth(const geometry::Geometry &geometry) const = 0;
 
