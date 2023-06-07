@@ -16,10 +16,10 @@ target_link_libraries(cupoch_utility
         dlpack::dlpack
         Eigen3::Eigen
         JsonCpp::JsonCpp
+        spdlog::spdlog
         stdgpu::stdgpu
     PRIVATE
         OpenGL::GL
-        spdlog::spdlog
 )
 
 if(USE_RMM)
