@@ -68,7 +68,7 @@ pip install cupoch
 Or install cupoch from source.
 
 ```
-git clone https://github.com/neka-nat/cupoch.git --recurse
+git clone https://github.com/neka-nat/cupoch.git
 cd cupoch
 mkdir build
 cd build
@@ -96,7 +96,7 @@ cd cmake-3.18.4
 ./bootstrap -- -DCMAKE_USE_OPENSSL=OFF
 make && sudo make install
 cd ..
-git clone -b jetson_nano https://github.com/neka-nat/cupoch.git --recurse
+git clone -b jetson_nano https://github.com/neka-nat/cupoch.git
 cd cupoch/
 mkdir build
 cd build/

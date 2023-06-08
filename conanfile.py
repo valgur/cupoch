@@ -120,6 +120,8 @@ class CupochConan(ConanFile):
 
         modules = self._enabled_modules
         print("Enabled modules:", modules)
+        if "imageproc" in modules:
+            self.requires("libsgm/3.0.0@cupoch")
         if "io" in modules:
             self.requires("libjpeg-turbo/2.1.5")
             self.requires("libpng/1.6.39")
@@ -186,7 +188,6 @@ class CupochConan(ConanFile):
 
     def package_info(self):
         mod_lib_deps = {
-            "imageproc": ["sgm"],
             "knn": ["flann_cuda_s"],
         }
         for module in self._enabled_modules:

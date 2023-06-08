@@ -1,0 +1,4 @@
+sources:
+  "3.0.0":
+    url: "https://github.com/fixstars/libSGM/archive/refs/tags/3.0.0.tar.gz"
+    sha256: "01175232b48ff18ed386b0d1fd27b84ba3b71d4f0ca7382a873b4101e3e8e99a"

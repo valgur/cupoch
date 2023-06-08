@@ -46,16 +46,16 @@ SemiGlobalMatching::SemiGlobalMatching(const SGMOption& option)
 std::shared_ptr<geometry::Image> SemiGlobalMatching::ProcessFrame(
         const geometry::Image& left, const geometry::Image& right) {
     auto output = std::make_shared<geometry::Image>();
-    if (sgm_.width_ == 0 || sgm_.height_ == 0) {
-        utility::LogError(
-                "[SemiGlobalMatching::ProcessFrame] Invalid SGM parameters.");
-        return output;
-    }
+    // if (sgm_.width_ == 0 || sgm_.height_ == 0) {
+    //     utility::LogError(
+    //             "[SemiGlobalMatching::ProcessFrame] Invalid SGM parameters.");
+    //     return output;
+    // }
     if (left.width_ != right.width_ || left.height_ != right.height_ ||
         left.num_of_channels_ != 1 || right.num_of_channels_ != 1 ||
         left.bytes_per_channel_ != 1 || right.bytes_per_channel_ != 1) {
         utility::LogError(
-                "[SemiGlobalMatching::ProcessFrame] Unsupport image type.");
+                "[SemiGlobalMatching::ProcessFrame] Unsupported image type.");
         return output;
     }
     output->Prepare(left.width_, left.height_, 1, 1);
