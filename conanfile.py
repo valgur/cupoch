@@ -2,7 +2,7 @@ from pathlib import Path
 
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import copy
+from conan.tools.files import copy, rm
 
 required_conan_version = ">=1.53.0"
 
@@ -50,13 +50,15 @@ class CupochConan(ConanFile):
     default_options.update({module: True for module in MODULES})
 
     exports_sources = [
-        "include/*",
-        "src/*",
         "cmake/*",
-        "examples/*",
+        "include/*",
+        "src/cupoch/*",
+        "src/tests/*",
+        "src/CMakeLists.txt",
         "scripts/*",
         "third_party/*",
         "CMakeLists.txt",
+        "LICENSE",
     ]
 
     @property
@@ -109,8 +111,9 @@ class CupochConan(ConanFile):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.90-pre@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
-        self.requires("thrust/1.16.0@cupoch", transitive_headers=True, transitive_libs=True,
-                      force=True)
+        self.requires(
+            "thrust/1.16.0@cupoch", transitive_headers=True, transitive_libs=True, force=True
+        )
         self.requires("stdgpu/cci.20230507@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
@@ -185,6 +188,13 @@ class CupochConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+        rm(self, "*.pdb", self.package_folder)
+        copy(
+            self,
+            pattern="LICENSE",
+            dst=Path(self.package_folder) / "licenses",
+            src=self.source_folder,
+        )
 
     def package_info(self):
         mod_lib_deps = {
