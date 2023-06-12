@@ -1,8 +1,10 @@
 set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_utility PARENT_SCOPE)
 
 find_package(dlpack REQUIRED CONFIG)
+find_package(Eigen3 REQUIRED CONFIG)
 find_package(jsoncpp REQUIRED CONFIG)
 find_package(OpenGL REQUIRED)
+find_package(spdlog REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 
 file(GLOB_RECURSE ALL_CPP_SOURCE_FILES "*.cpp")

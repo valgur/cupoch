@@ -122,9 +122,6 @@ endif ()
 
 include(configure_cuda)
 
-find_package(Eigen3 REQUIRED CONFIG)
-find_package(spdlog REQUIRED CONFIG)
-
 include_directories(src)
 add_subdirectory(src)
 if (BUILD_EXAMPLES)

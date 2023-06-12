@@ -14,7 +14,10 @@ target_compile_definitions(cupoch_kinematics PUBLIC CUPOCH_KINEMATICS_ENABLED)
 target_link_libraries(cupoch_kinematics
     PUBLIC
         cupoch::collision
+        cupoch::flags
+        urdfdom::urdfdom
+    PRIVATE
+        cupoch::geometry
         cupoch::io
         cupoch::utility
-        urdfdom::urdfdom
 )

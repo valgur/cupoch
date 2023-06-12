@@ -27,6 +27,7 @@ add_custom_target(shader_file_target ALL
                   DEPENDS ${PROJECT_SOURCE_DIR}/src/cupoch/visualization/shader/shader.h)
 set_target_properties(shader_file_target PROPERTIES FOLDER "custom")
 
+find_package(Eigen3 REQUIRED CONFIG)
 find_package(GLEW REQUIRED CONFIG)
 find_package(glfw3 REQUIRED CONFIG)
 find_package(imgui REQUIRED CONFIG)

@@ -2,6 +2,8 @@ if(TARGET flann_cuda_s)
   return()
 endif()
 
+find_package(spdlog REQUIRED CONFIG)
+
 set(flann_cuda_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/flann)
 
 file(GLOB_RECURSE CU_SOURCES ${flann_cuda_SOURCE_DIR}/*.cu)

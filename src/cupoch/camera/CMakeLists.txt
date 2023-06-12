@@ -10,7 +10,6 @@ target_compile_definitions(cupoch_camera PUBLIC CUPOCH_CAMERA_ENABLED)
 target_link_libraries(cupoch_camera
     PUBLIC
         cupoch::utility
-        Eigen3::Eigen
     PRIVATE
         cupoch::flags
 )

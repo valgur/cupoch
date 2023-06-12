@@ -3,6 +3,8 @@ if(NOT BUILD_cupoch_odometry)
 endif()
 set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_odometry PARENT_SCOPE)
 
+find_package(Eigen3 REQUIRED CONFIG)
+
 # build
 file(GLOB_RECURSE ALL_CUDA_SOURCE_FILES "*.cu")
 

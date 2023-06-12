@@ -3,6 +3,7 @@ if(NOT BUILD_cupoch_geometry)
 endif()
 set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_geometry PARENT_SCOPE)
 
+find_package(Eigen3 REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 find_package(tritriintersect REQUIRED CONFIG)
 

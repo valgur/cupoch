@@ -21,7 +21,6 @@ target_link_libraries(cupoch_io
     PUBLIC
         cupoch::geometry
         cupoch::utility
-        Eigen3::Eigen
     PRIVATE
         cupoch::flags
         liblzf::liblzf
