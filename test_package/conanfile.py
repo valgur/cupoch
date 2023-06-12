@@ -22,6 +22,15 @@ class CupochTestPkg(ConanFile):
         cmake.build()
 
     def test(self):
-        if can_run(self):
+        if not can_run(self):
+            return
+        cupoch_opts = self.dependencies["cupoch"].options
+        if cupoch_opts.registration:
             cmd = os.path.join(self.cpp.build.bindir, "test_registration")
+            self.run(cmd, env="conanrun")
+        if cupoch_opts.kinematics:
+            cmd = os.path.join(self.cpp.build.bindir, "test_kinematics")
+            self.run(cmd, env="conanrun")
+        if cupoch_opts.io:
+            cmd = os.path.join(self.cpp.build.bindir, "test_io")
             self.run(cmd, env="conanrun")
