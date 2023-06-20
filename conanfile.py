@@ -109,6 +109,10 @@ class CupochConan(ConanFile):
         self.options["thrust"].device_system = "cuda"
         self.options["stdgpu"].backend = "cuda"
 
+    def package_id(self):
+        for module in self._enabled_modules:
+            setattr(self.info.options, module, True)
+
     def requirements(self):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.90-20230718@cupoch", transitive_headers=True)
