@@ -145,23 +145,7 @@ class CupochConan(ConanFile):
     def layout(self):
         cmake_layout(self)
 
-    def _copy_imgui_backend(self):
-        # The imgui backends are not built by default and need to be copied to the source tree
-        backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
-        output_dir = self.source_path / "src/cupoch/visualization/visualizer/imgui/backends"
-        for backend_file in [
-            "imgui_impl_glfw.h",
-            "imgui_impl_glfw.cpp",
-            "imgui_impl_opengl3.h",
-            "imgui_impl_opengl3_loader.h",
-            "imgui_impl_opengl3.cpp",
-        ]:
-            copy(self, backend_file, backends_dir, output_dir)
-
     def generate(self):
-        if "visualization" in self._enabled_modules:
-            self._copy_imgui_backend()
-
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
@@ -180,7 +164,22 @@ class CupochConan(ConanFile):
         deps.check_components_exist = True
         deps.generate()
 
+    def _copy_imgui_backends(self):
+        # The imgui backends are not built by default and need to be copied to the source tree
+        backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
+        output_dir = self.source_path / "src/cupoch/visualization/visualizer/imgui/backends"
+        for backend_file in [
+            "imgui_impl_glfw.h",
+            "imgui_impl_glfw.cpp",
+            "imgui_impl_opengl3.h",
+            "imgui_impl_opengl3_loader.h",
+            "imgui_impl_opengl3.cpp",
+        ]:
+            copy(self, backend_file, backends_dir, output_dir)
+
     def build(self):
+        if "visualization" in self._enabled_modules:
+            self._copy_imgui_backends()
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
