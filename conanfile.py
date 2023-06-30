@@ -51,6 +51,7 @@ class CupochConan(ConanFile):
     }
     default_options.update({module: True for module in MODULES})
 
+    exports = ["third_party/conan-recipes/*"]
     exports_sources = [
         "cmake/*",
         "include/*",
@@ -84,6 +85,16 @@ class CupochConan(ConanFile):
         # Add '-c tools.build:skip_test=false' to command line args to enable.
         return not self.conf.get("tools.build:skip_test", default=True, check_type=bool)
 
+    def _export_local_recipes(self):
+        self.output.info("Exporting recipes for dependencies that are not yet available in ConanCenter")
+        recipes_root = Path(self.recipe_folder) / "third_party" / "conan-recipes"
+        for pkg_dir in recipes_root.iterdir():
+            if pkg_dir.is_dir():
+                self.run(f"conan export {pkg_dir} --user cupoch")
+
+    def export_sources(self):
+        self._export_local_recipes()
+
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
@@ -95,21 +106,7 @@ class CupochConan(ConanFile):
         self.options["thrust"].device_system = "cuda"
         self.options["stdgpu"].backend = "cuda"
 
-    def _export_local_recipes(self):
-        # Export local recipes for dependencies that are not yet available on ConanCenter
-        conanfile_dir = Path(__file__).parent
-        recipes_root = conanfile_dir / "third_party" / "conan-recipes"
-        if not recipes_root.is_dir():
-            # Running from Conan cache
-            sources_dir = conanfile_dir.parent / "es"
-            recipes_root = sources_dir / "third_party" / "conan-recipes"
-        for pkg_dir in recipes_root.iterdir():
-            if pkg_dir.is_dir():
-                self.run(f"conan export {pkg_dir} --user cupoch")
-
     def requirements(self):
-        self._export_local_recipes()
-
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.90-pre@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.11.0", transitive_headers=True, transitive_libs=True)
