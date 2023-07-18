@@ -8,7 +8,7 @@ required_conan_version = ">=1.52.0"
 
 class EigenConan(ConanFile):
     name = "eigen"
-    version = "3.4.90-pre"
+    version = "3.4.90-20230718"
     url = "https://github.com/conan-io/conan-center-index"
     homepage = "http://eigen.tuxfamily.org"
     description = "Eigen is a C++ template library for linear algebra: matrices, vectors," \
@@ -38,8 +38,7 @@ class EigenConan(ConanFile):
         self.info.clear()
 
     def source(self):
-        get(self, **self.conan_data["sources"][self.version],
-            destination=self.source_folder, strip_root=True)
+        get(self, **self.conan_data["sources"][self.version], strip_root=True)
 
     def generate(self):
         tc = CMakeToolchain(self)

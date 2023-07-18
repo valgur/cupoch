@@ -108,12 +108,13 @@ class CupochConan(ConanFile):
 
     def requirements(self):
         # Used by all modules via cupoch_utility
-        self.requires("eigen/3.4.90-pre@cupoch", transitive_headers=True)
+        self.requires("eigen/3.4.90-20230718@cupoch", transitive_headers=True)
         self.requires("spdlog/1.11.0", transitive_headers=True)
         self.requires("thrust/1.16.0", transitive_headers=True, force=True)
         self.requires("stdgpu/cci.20230507@cupoch", transitive_headers=True)
         self.requires("dlpack/0.4")
         self.requires("jsoncpp/1.9.5")
+        self.requires("fmt/10.0.0", override=True)
 
         if self.options.get_safe("use_rmm", False):
             self.requires("rmm/23.06.00", transitive_headers=True)
