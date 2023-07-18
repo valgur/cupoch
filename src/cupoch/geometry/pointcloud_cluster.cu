@@ -60,7 +60,7 @@ struct bfs_functor {
                 const int *exscan_vd,
                 const int *indices,
                 int *xa,
-                bool *fa)
+                int *fa)
         : vertex_degrees_(vertex_degrees),
           exscan_vd_(exscan_vd),
           indices_(indices),
@@ -70,17 +70,17 @@ struct bfs_functor {
     const int *exscan_vd_;
     const int *indices_;
     int *xa_;
-    bool *fa_;
+    int *fa_;
     __device__ void operator()(size_t idx) const {
         if (fa_[idx] == 1) {
-            fa_[idx] = false;
+            fa_[idx] = 0;
             xa_[idx] = 1;
             const int vd = __ldg(&vertex_degrees_[idx]);
             for (int i = 0; i < vd; i++) {
                 const int ev = __ldg(&exscan_vd_[idx]);
                 const int index = __ldg(&indices_[ev + i]);
                 if (xa_[index] == 0) {
-                    fa_[index] = true;
+                    fa_[index] = 1;
                 }
             }
         }
@@ -88,15 +88,16 @@ struct bfs_functor {
 };
 
 struct set_label_functor {
-    set_label_functor(const int *xa, int cluster, int *clusters, int *visited)
-        : xa_(xa), cluster_(cluster), clusters_(clusters), visited_(visited){};
+    set_label_functor(const int *xa, int cluster, int *clusters, int *visited, bool is_noise)
+        : xa_(xa), cluster_(cluster), clusters_(clusters), visited_(visited), is_noise_(is_noise) {};
     const int *xa_;
     const int cluster_;
     int *clusters_;
     int *visited_;
+    bool is_noise_;
     __device__ void operator()(size_t idx) const {
         if (xa_[idx] == 1) {
-            clusters_[idx] = cluster_;
+            clusters_[idx] = is_noise_ ? -1 : cluster_;
             visited_[idx] = 1;
         }
     }
@@ -142,17 +143,14 @@ std::unique_ptr<utility::device_vector<int>> PointCloud::ClusterDBSCAN(float eps
     utility::pinned_host_vector<int> h_visited(n_pt, 0);
     auto clusters = std::make_unique<utility::device_vector<int>>(n_pt, -1);
     utility::device_vector<int> xa(n_pt);
-    utility::device_vector<bool> fa(n_pt);
+    utility::device_vector<int> fa(n_pt);
     for (int i = 0; i < n_pt; i++) {
         ++progress_bar;
         if (h_visited[i] != 1) {
-            thrust::fill_n(make_tuple_iterator(visited.begin() + i,
-                                               clusters->begin() + i),
-                           1, thrust::make_tuple(1, cluster));
             thrust::fill(make_tuple_begin(xa, fa), make_tuple_end(xa, fa),
                          thrust::make_tuple(0, 0));
-            fa[i] = true;
-            while (!thrust::any_of(fa.begin(), fa.end(), thrust::identity<bool>())) {
+            fa[i] = 1;
+            while (thrust::find(fa.begin(), fa.end(), 1) != fa.end()) {
                 bfs_functor bfs_func(
                         thrust::raw_pointer_cast(vertex_degrees.data()),
                         thrust::raw_pointer_cast(exscan_vd.data()),
@@ -163,15 +161,19 @@ std::unique_ptr<utility::device_vector<int>> PointCloud::ClusterDBSCAN(float eps
                                  thrust::make_counting_iterator(n_pt),
                                  bfs_func);
             }
+            const int xa_count = thrust::reduce(utility::exec_policy(0), xa.begin(), xa.end(),
+                                                0, thrust::plus<int>());
+            const bool is_noise = xa_count < min_points;
             set_label_functor sl_func(thrust::raw_pointer_cast(xa.data()),
                                       cluster,
                                       thrust::raw_pointer_cast(clusters->data()),
-                                      thrust::raw_pointer_cast(visited.data()));
+                                      thrust::raw_pointer_cast(visited.data()),
+                                      is_noise);
             thrust::for_each(thrust::make_counting_iterator<size_t>(0),
                              thrust::make_counting_iterator(n_pt), sl_func);
             copy_device_to_host(visited, h_visited);
             cudaSafeCall(cudaDeviceSynchronize());
-            cluster++;
+            if (!is_noise) cluster++;
         }
     }
     return clusters;
