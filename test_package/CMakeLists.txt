@@ -4,4 +4,4 @@ project(PackageTest LANGUAGES CXX CUDA)
 find_package(cupoch REQUIRED)
 
 add_executable(test_registration test_registration.cpp)
-target_link_libraries(test_registration PRIVATE cupoch::cupoch)
+target_link_libraries(test_registration PRIVATE cupoch::registration)

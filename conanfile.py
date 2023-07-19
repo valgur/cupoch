@@ -123,7 +123,7 @@ class CupochConan(ConanFile):
             self.requires("rmm/23.06.00", transitive_headers=True)
 
         modules = self._enabled_modules
-        print("Enabled modules:", modules)
+        self.output.info("Enabled modules:", modules)
         if "imageproc" in modules:
             self.requires("libsgm/3.0.0@cupoch")
         if "io" in modules:
@@ -198,29 +198,67 @@ class CupochConan(ConanFile):
              src=self.source_path)
         rm(self, "*.pdb", self.package_path, recursive=True)
 
-    def package_info(self):
-        mod_lib_deps = {
-            "knn": ["flann_cuda_s"],
+    def _module_reqs(self, component):
+        reqs = {
+            "utility": [
+                "eigen::eigen",
+                "spdlog::spdlog",
+                "thrust::thrust",
+                "stdgpu::stdgpu",
+                "dlpack::dlpack",
+                "jsoncpp::jsoncpp",
+            ],
+            "imageproc": [
+                "libsgm::libsgm",
+            ],
+            "io": [
+                "libjpeg-turbo::libjpeg-turbo",
+                "libpng::libpng",
+                "rply::rply",
+                "tinyobjloader::tinyobjloader",
+                "liblzf::liblzf",
+            ],
+            "kinematics": [
+                "urdfdom::urdfdom",
+            ],
+            "visualization": [
+                "glew::glew",
+                "glfw::glfw",
+                "imgui::imgui",
+            ],
         }
-        for module in self._enabled_modules:
-            # TODO: exporting modules as individual components would be preferable
-            # component = self.cpp_info.components[module]
-            # component.set_property("cmake_target_name", f"cupoch::{module}")
-            # component.requires = MODULE_DEPS.get(module, [])
-            self.cpp_info.libs += [f"cupoch_{module}"]
-            self.cpp_info.libs += mod_lib_deps.get(module, [])
-            self.cpp_info.defines.append(f"CUPOCH_{module.upper()}_ENABLED")
-        self.cpp_info.libs += ["cupoch_utility"]
+        return reqs.get(component, [])
+
+    def package_info(self):
+        for module in self._enabled_modules + ["utility"]:
+            component = self.cpp_info.components[module]
+            component.libs += [f"cupoch_{module}"]
+            component.defines.append(f"CUPOCH_{module.upper()}_ENABLED")
+            component.requires = MODULE_DEPS.get(module, [])
+            component.requires += self._module_reqs(module)
+            if module != "utility":
+                component.requires.append("utility")
+            self.cpp_info.components["cupoch"].requires.append(module)
+
+        if "knn" in self._enabled_modules:
+            self.cpp_info.components["flann_cuda"].libs = ["flann_cuda_s"]
+            self.cpp_info.components["flann_cuda"].defines = ["FLANN_USE_CUDA"]
+            self.cpp_info.components["knn"].requires.append("flann_cuda")
+
+        if self.options.get_safe("use_rmm"):
+            self.cpp_info.components["utility"].requires.append("rmm::rmm")
 
         # Propagate necessary build flags
-        self.cpp_info.defines.append("FLANN_USE_CUDA")
-        self.cpp_info.defines.append("_USE_MATH_DEFINES")
+        utility = self.cpp_info.components["utility"]
+        utility.defines.append("_USE_MATH_DEFINES")
         if self.settings.os == "Windows":
-            self.cpp_info.defines.append("_CRT_SECURE_NO_DEPRECATE")
-            self.cpp_info.defines.append("_CRT_NONSTDC_NO_DEPRECATE")
-            self.cpp_info.defines.append("_SCL_SECURE_NO_WARNINGS")
-            self.cpp_info.defines.append("THRUST_CPP11_REQUIRED_NO_ERROR")
-            self.cpp_info.defines.append("NOMINMAX")
+            utility.cxxflags += ["/EHsc", "/Zc:__cplusplus", "/bigobj"]
+            utility.defines.append("_ENABLE_EXTENDED_ALIGNED_STORAGE")
+            utility.defines.append("_CRT_SECURE_NO_DEPRECATE")
+            utility.defines.append("_CRT_NONSTDC_NO_DEPRECATE")
+            utility.defines.append("_SCL_SECURE_NO_WARNINGS")
+            utility.defines.append("THRUST_CPP11_REQUIRED_NO_ERROR")
+            utility.defines.append("NOMINMAX")
 
-        self.cpp_info.set_property("cmake_build_modules",
-                                   [os.path.join("lib", "cmake", "configure_cuda.cmake")])
+        # Export CUDA dependencies and flags
+        self.cpp_info.set_property("cmake_build_modules", [os.path.join("lib", "cmake", "configure_cuda.cmake")])
