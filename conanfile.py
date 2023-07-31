@@ -86,7 +86,9 @@ class CupochConan(ConanFile):
         return not self.conf.get("tools.build:skip_test", default=True, check_type=bool)
 
     def _export_local_recipes(self):
-        self.output.info("Exporting recipes for dependencies that are not yet available in ConanCenter")
+        self.output.info(
+            "Exporting recipes for dependencies that are not yet available in ConanCenter"
+        )
         recipes_root = Path(self.recipe_folder) / "third_party" / "conan-recipes"
         for pkg_dir in recipes_root.iterdir():
             if pkg_dir.is_dir():
@@ -125,7 +127,7 @@ class CupochConan(ConanFile):
             self.requires("libsgm/3.0.0@cupoch")
         if "io" in modules:
             self.requires("libjpeg-turbo/2.1.5")
-            self.requires("libpng/1.6.39")
+            self.requires("libpng/1.6.40")
             self.requires("rply/1.1.4")
             self.requires("tinyobjloader/1.0.7")
             self.requires("liblzf/3.6")
@@ -146,7 +148,7 @@ class CupochConan(ConanFile):
         # The imgui backends are not built by default and need to be copied to the source tree
         imgui_paths = self.dependencies["imgui/1.89.4"].cpp_info.srcdirs
         backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
-        output_dir = Path(self.source_folder) / "src/cupoch/visualization/visualizer/imgui/backends"
+        output_dir = self.source_path / "src/cupoch/visualization/visualizer/imgui/backends"
         for backend_file in [
             "imgui_impl_glfw.h",
             "imgui_impl_glfw.cpp",
@@ -188,13 +190,10 @@ class CupochConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        rm(self, "*.pdb", self.package_folder)
-        copy(
-            self,
-            pattern="LICENSE",
-            dst=Path(self.package_folder) / "licenses",
-            src=self.source_folder,
-        )
+        rm(self, "*.pdb", self.package_path)
+        copy(self, "LICENSE",
+             dst=self.package_path / "licenses",
+             src=self.source_path)
 
     def package_info(self):
         mod_lib_deps = {
