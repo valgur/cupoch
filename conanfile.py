@@ -129,7 +129,7 @@ class CupochConan(ConanFile):
         modules = self._enabled_modules
         self.output.info("Enabled modules:", modules)
         if "imageproc" in modules:
-            self.requires("libsgm/3.0.0@cupoch")
+            self.requires("libsgm/3.0.0@cupoch", transitive_headers=True)
         if "io" in modules:
             self.requires("libjpeg-turbo/3.0.0")
             self.requires("libpng/1.6.40")

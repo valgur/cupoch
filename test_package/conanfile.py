@@ -25,12 +25,18 @@ class CupochTestPkg(ConanFile):
         if not can_run(self):
             return
         cupoch_opts = self.dependencies["cupoch"].options
-        if cupoch_opts.registration:
-            cmd = os.path.join(self.cpp.build.bindir, "test_registration")
-            self.run(cmd, env="conanrun")
         if cupoch_opts.kinematics:
             cmd = os.path.join(self.cpp.build.bindir, "test_kinematics")
             self.run(cmd, env="conanrun")
+        if cupoch_opts.imageproc and cupoch_opts.io:
+            cmd = os.path.join(self.cpp.build.bindir, "test_imageproc")
+            self.run(cmd, env="conanrun")
         if cupoch_opts.io:
             cmd = os.path.join(self.cpp.build.bindir, "test_io")
+            self.run(cmd, env="conanrun")
+        if cupoch_opts.registration:
+            cmd = os.path.join(self.cpp.build.bindir, "test_registration")
+            self.run(cmd, env="conanrun")
+        if cupoch_opts.visualization:
+            cmd = os.path.join(self.cpp.build.bindir, "test_visualization")
             self.run(cmd, env="conanrun")
