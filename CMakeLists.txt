@@ -121,32 +121,7 @@ elseif (UNIX OR APPLE)
     add_compile_options($<$<CONFIG:Debug>:-O3>)
 endif ()
 
-find_package(thrust REQUIRED CONFIG)
-find_package(stdgpu REQUIRED CONFIG)
-find_package(CUDAToolkit REQUIRED)
-add_library(cupoch_flags INTERFACE)
-add_library(cupoch::flags ALIAS cupoch_flags)
-if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-    # Generate for 10xx+ series GPUs by default.
-    # Newer but not listed GPUs will JIT compile on launch.
-    set(CMAKE_CUDA_ARCHITECTURES 61)
-endif()
-target_compile_features(cupoch_flags INTERFACE cxx_std_17 $<BUILD_INTERFACE:cuda_std_17>)
-target_compile_options(cupoch_flags INTERFACE
-    "$<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:--use_fast_math>"
-    "$<$<BOOL:UNIX>:$<$<COMPILE_LANGUAGE:CUDA>:--compiler-options=-fPIC>>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=integer_sign_change>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=partial_override>"
-    "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=virtual_function_decl_hidden>"
-)
-target_link_libraries(cupoch_flags INTERFACE CUDA::cudart thrust::thrust)
-target_compile_definitions(cupoch_flags INTERFACE THRUST_IGNORE_CUB_VERSION_CHECK)
-if (USE_RMM)
-    target_compile_definitions(cupoch_flags INTERFACE USE_RMM)
-endif ()
+include(configure_cuda)
 
 find_package(Eigen3 REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)

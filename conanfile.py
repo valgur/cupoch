@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from conan import ConanFile
@@ -118,7 +119,7 @@ class CupochConan(ConanFile):
         self.requires("jsoncpp/1.9.5")
         self.requires("fmt/10.0.0", override=True)
 
-        if self.options.get_safe("use_rmm", False):
+        if self.options.get_safe("use_rmm"):
             self.requires("rmm/23.06.00", transitive_headers=True)
 
         modules = self._enabled_modules
@@ -126,17 +127,17 @@ class CupochConan(ConanFile):
         if "imageproc" in modules:
             self.requires("libsgm/3.0.0@cupoch")
         if "io" in modules:
-            self.requires("libjpeg-turbo/2.1.5")
+            self.requires("libjpeg-turbo/3.0.0")
             self.requires("libpng/1.6.40")
             self.requires("rply/1.1.4")
-            self.requires("tinyobjloader/1.0.7")
+            self.requires("tinyobjloader/2.0.0-rc10")
             self.requires("liblzf/3.6")
         if "kinematics" in modules:
             self.requires("urdfdom/3.1.1@cupoch")
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
-            self.requires("imgui/1.89.4")
+            self.requires("imgui/1.89.7")
 
     def build_requirements(self):
         self.test_requires("gtest/1.13.0")
@@ -146,8 +147,7 @@ class CupochConan(ConanFile):
 
     def _copy_imgui_backend(self):
         # The imgui backends are not built by default and need to be copied to the source tree
-        imgui_paths = self.dependencies["imgui/1.89.4"].cpp_info.srcdirs
-        backends_dir = next(path for path in imgui_paths if path.endswith("bindings"))
+        backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
         output_dir = self.source_path / "src/cupoch/visualization/visualizer/imgui/backends"
         for backend_file in [
             "imgui_impl_glfw.h",
@@ -190,10 +190,13 @@ class CupochConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        rm(self, "*.pdb", self.package_path)
+        copy(self, "configure_cuda.cmake",
+             dst=self.package_path / "lib" / "cmake",
+             src=self.source_path / "cmake")
         copy(self, "LICENSE",
              dst=self.package_path / "licenses",
              src=self.source_path)
+        rm(self, "*.pdb", self.package_path, recursive=True)
 
     def package_info(self):
         mod_lib_deps = {
@@ -218,3 +221,6 @@ class CupochConan(ConanFile):
             self.cpp_info.defines.append("_SCL_SECURE_NO_WARNINGS")
             self.cpp_info.defines.append("THRUST_CPP11_REQUIRED_NO_ERROR")
             self.cpp_info.defines.append("NOMINMAX")
+
+        self.cpp_info.set_property("cmake_build_modules",
+                                   [os.path.join("lib", "cmake", "configure_cuda.cmake")])
