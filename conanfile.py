@@ -119,7 +119,7 @@ class CupochConan(ConanFile):
         self.requires("spdlog/1.11.0", transitive_headers=True)
         self.requires("thrust/1.16.0", transitive_headers=True, force=True)
         self.requires("stdgpu/cci.20230507@cupoch", transitive_headers=True)
-        self.requires("dlpack/0.4")
+        self.requires("dlpack/0.8")
         self.requires("jsoncpp/1.9.5")
         self.requires("fmt/10.0.0", override=True)
 

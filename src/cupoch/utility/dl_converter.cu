@@ -68,9 +68,9 @@ DLManagedTensor *ToDLPack(
     dvdl->tensor.dl_tensor.data = const_cast<void *>(
             (const void *)(thrust::raw_pointer_cast(src.data())));
     int64_t device_id = GetDevice();
-    DLContext device;
+    DLDevice device;
     device.device_id = device_id;
-    device.device_type = DLDeviceType::kDLGPU;
+    device.device_type = DLDeviceType::kDLCUDA;
     dvdl->tensor.dl_tensor.device = device;
     dvdl->tensor.dl_tensor.ndim = 2;
     DLDataType dtype;
@@ -110,7 +110,7 @@ void FromDLPack(const DLManagedTensor *src,
                 thrust::raw_pointer_cast(base_ptr),
                 src->dl_tensor.shape[0] * sizeof(Eigen::Matrix<T, Dim, 1>),
                 cudaMemcpyHostToDevice));
-    } else if (src->dl_tensor.device.device_type == DLDeviceType::kDLGPU) {
+    } else if (src->dl_tensor.device.device_type == DLDeviceType::kDLCUDA) {
         thrust::copy(base_ptr, base_ptr + src->dl_tensor.shape[0], dst.begin());
     } else {
         utility::LogError("[FromDLPack] Unsupported device type.");
