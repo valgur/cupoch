@@ -47,10 +47,20 @@ class CupochConan(ConanFile):
     default_options = {
         "shared": False,
         "fPIC": True,
-        "cuda_architectures": None,
+        "cuda_architectures": "native",
         "use_rmm": True,
     }
     default_options.update({module: True for module in MODULES})
+
+    options_description = {
+        "shared": "Build shared libraries, static otherwise.",
+        "fPIC": "Enable position-independent code.",
+        "cuda_architectures": (
+            "Sets the CUDA architectures to generate device code for via CMAKE_CUDA_ARCHITECTURES. "
+            "Generates code for all architectures if set to None."
+        ),
+        "use_rmm": "Use RAPIDS Memory Manager for memory management.",
+    }
 
     exports = ["third_party/conan-recipes/*"]
     exports_sources = [
@@ -144,6 +154,8 @@ class CupochConan(ConanFile):
             self.requires("imgui/1.89.7")
 
     def build_requirements(self):
+        # For native/all/all-major CUDA architectures support
+        self.tool_requires("cmake/[>=3.24]")
         self.test_requires("gtest/1.13.0")
 
     def layout(self):
@@ -193,9 +205,10 @@ class CupochConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        copy(self, "configure_cuda.cmake",
-             dst=self.package_path / "lib" / "cmake",
-             src=self.source_path / "cmake")
+        for cmake_module in ["configure_cuda.cmake", "cuda_architecture_macros.cmake"]:
+            copy(self, cmake_module,
+                 dst=self.package_path / "lib" / "cmake",
+                 src=self.source_path / "cmake")
         copy(self, "LICENSE",
              dst=self.package_path / "licenses",
              src=self.source_path)
@@ -264,4 +277,6 @@ class CupochConan(ConanFile):
             utility.defines.append("NOMINMAX")
 
         # Export CUDA dependencies and flags
-        self.cpp_info.set_property("cmake_build_modules", [os.path.join("lib", "cmake", "configure_cuda.cmake")])
+        cmake_dir = Path("lib", "cmake")
+        self.cpp_info.builddirs.append(cmake_dir)
+        self.cpp_info.set_property("cmake_build_modules", [cmake_dir / "configure_cuda.cmake"])
