@@ -138,7 +138,7 @@ if (INIT_ARCHITECTURES)
 endif()
 message(STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
 
-include(configure_cupoch_cuda_flags)
+include(cupoch_cuda_flags)
 
 include_directories(src)
 add_subdirectory(src)

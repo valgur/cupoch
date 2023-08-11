@@ -205,7 +205,7 @@ class CupochConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        for cmake_module in ["configure_cuda.cmake", "cuda_architecture_macros.cmake"]:
+        for cmake_module in ["cupoch_cuda_flags.cmake", "cuda_architecture_macros.cmake"]:
             copy(self, cmake_module,
                  dst=self.package_path / "lib" / "cmake",
                  src=self.source_path / "cmake")
@@ -279,4 +279,4 @@ class CupochConan(ConanFile):
         # Export CUDA dependencies and flags
         cmake_dir = Path("lib", "cmake")
         self.cpp_info.builddirs.append(cmake_dir)
-        self.cpp_info.set_property("cmake_build_modules", [cmake_dir / "configure_cuda.cmake"])
+        self.cpp_info.set_property("cmake_build_modules", [cmake_dir / "cupoch_cuda_flags.cmake"])
