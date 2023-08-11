@@ -1,7 +1,16 @@
-cmake_minimum_required(VERSION 3.18)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(set_cupoch_version)
-project(cupoch VERSION ${CUPOCH_VERSION} LANGUAGES CXX CUDA)
+
+cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+project(cupoch VERSION ${CUPOCH_VERSION})
+
+# Must be handled before enable_language(CUDA)
+if (NOT CMAKE_CUDA_ARCHITECTURES AND NOT DEFINED INIT_ARCHITECTURES)
+    set(INIT_ARCHITECTURES TRUE)
+endif()
+
+enable_language(CXX)
+enable_language(CUDA)
 
 # PyPI package name controls specifies the repository name on PyPI. The default
 # name is "cupoch". 
@@ -120,7 +129,16 @@ elseif (UNIX OR APPLE)
     add_compile_options($<$<CONFIG:Debug>:-O3>)
 endif ()
 
-include(configure_cuda)
+if (INIT_ARCHITECTURES)
+    include(cuda_architecture_macros)
+    init_cmake_cuda_architectures()
+    set(CMAKE_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+        CACHE STRING "List of CUDA architectures to generate device code for" FORCE)
+    set(INIT_ARCHITECTURES FALSE CACHE INTERNAL "")
+endif()
+message(STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")
+
+include(configure_cupoch_cuda_flags)
 
 include_directories(src)
 add_subdirectory(src)

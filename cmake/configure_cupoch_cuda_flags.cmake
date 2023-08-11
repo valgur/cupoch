@@ -2,11 +2,6 @@ if(TARGET cupoch::flags)
     return()
 endif()
 
-if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-    # Build with the default CUDA architectures set by nvcc if not specified
-    set(CMAKE_CUDA_ARCHITECTURES "")
-endif()
-
 find_package(thrust REQUIRED CONFIG)
 find_package(stdgpu REQUIRED CONFIG)
 find_package(CUDAToolkit REQUIRED)
@@ -30,6 +25,9 @@ target_compile_options(cupoch_flags INTERFACE
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=integer_sign_change>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=partial_override>"
     "$<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe=--diag_suppress=virtual_function_decl_hidden>"
+)
+set_property(TARGET cupoch_flags PROPERTY
+    CUDA_SEPARABLE_COMPILATION ON
 )
 target_link_libraries(cupoch_flags INTERFACE
     CUDA::cudart
