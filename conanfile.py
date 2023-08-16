@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from conan import ConanFile
@@ -97,16 +98,12 @@ class CupochConan(ConanFile):
         return not self.conf.get("tools.build:skip_test", default=True, check_type=bool)
 
     def _export_local_recipes(self):
-        self.output.info(
-            "Exporting recipes for dependencies that are not yet available in ConanCenter"
-        )
+        self.output.info("Exporting recipes for dependencies that are not yet available in ConanCenter")
         recipes_root = Path(self.recipe_folder) / "third_party" / "conan-recipes"
         for pkg_dir in recipes_root.iterdir():
             if pkg_dir.is_dir():
-                self.run(f"conan export {pkg_dir} --user cupoch")
-
-    def export_sources(self):
-        self._export_local_recipes()
+                conan = sys.argv[0]
+                self.run(f"{conan} export {pkg_dir} --user cupoch")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -124,6 +121,8 @@ class CupochConan(ConanFile):
             setattr(self.info.options, module, True)
 
     def requirements(self):
+        self._export_local_recipes()
+
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.90-20230718@cupoch", transitive_headers=True)
         self.requires("spdlog/1.11.0", transitive_headers=True)
