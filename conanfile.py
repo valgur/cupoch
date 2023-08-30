@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -150,12 +149,12 @@ class CupochConan(ConanFile):
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
-            self.requires("imgui/1.89.7")
+            self.requires("imgui/1.89.8-docking")
 
     def build_requirements(self):
         # For native/all/all-major CUDA architectures support
         self.tool_requires("cmake/[>=3.24]")
-        self.test_requires("gtest/1.13.0")
+        self.test_requires("gtest/1.14.0")
 
     def layout(self):
         cmake_layout(self)
