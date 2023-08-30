@@ -27,4 +27,5 @@ target_link_libraries(cupoch_utility
 if(USE_RMM)
     find_package(rmm REQUIRED CONFIG)
     target_link_libraries(cupoch_utility PUBLIC rmm::rmm)
+    target_compile_definitions(cupoch_utility PUBLIC USE_RMM)
 endif()

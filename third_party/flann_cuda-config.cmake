@@ -15,6 +15,7 @@ target_link_libraries(flann_cuda_s PRIVATE cupoch::flags CUDA::cudart spdlog::sp
 if(USE_RMM)
   find_package(rmm REQUIRED CONFIG)
   target_link_libraries(flann_cuda_s PRIVATE rmm::rmm)
+  target_compile_definitions(flann_cuda_s PUBLIC USE_RMM)
 endif()
 install(TARGETS flann_cuda_s)
 install(DIRECTORY ${flann_cuda_SOURCE_DIR}/

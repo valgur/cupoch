@@ -262,6 +262,10 @@ class CupochConan(ConanFile):
 
         if self.options.get_safe("use_rmm"):
             self.cpp_info.components["utility"].requires.append("rmm::rmm")
+            self.cpp_info.components["utility"].defines.append("USE_RMM")
+            if "flann_cuda" in self.cpp_info.components:
+                self.cpp_info.components["flann_cuda"].requires.append("rmm::rmm")
+                self.cpp_info.components["flann_cuda"].defines.append("USE_RMM")
 
         # Propagate necessary build flags
         utility = self.cpp_info.components["utility"]

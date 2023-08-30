@@ -35,7 +35,6 @@ target_link_libraries(cupoch_flags INTERFACE
 )
 target_compile_definitions(cupoch_flags INTERFACE
     THRUST_IGNORE_CUB_VERSION_CHECK
-    $<$<BOOL:USE_RMM>:USE_RMM>
 )
 
 if (TARGET cupoch::utility)
