@@ -123,33 +123,35 @@ class CupochConan(ConanFile):
         self._export_local_recipes()
 
         # Used by all modules via cupoch_utility
-        self.requires("eigen/3.4.90-20230718@cupoch", transitive_headers=True)
-        self.requires("spdlog/1.11.0", transitive_headers=True)
-        self.requires("thrust/1.16.0", transitive_headers=True, force=True)
-        self.requires("stdgpu/cci.20230507@cupoch", transitive_headers=True)
+        self.requires("eigen/3.4.90-20240221@cupoch", transitive_headers=True)
+        self.requires("spdlog/1.13.0", transitive_headers=True, force=True)
+        self.requires("thrust/2.2.0@cupoch", transitive_headers=True, force=True)
+        self.requires("libcudacxx/2.2.0@cupoch", override=True)
+        self.requires("cub/2.2.0@cupoch", override=True)
+        self.requires("stdgpu/cci.20230913@cupoch", transitive_headers=True)
         self.requires("dlpack/0.8")
         self.requires("jsoncpp/1.9.5")
-        self.requires("fmt/10.0.0", override=True)
+        self.requires("fmt/10.2.1", override=True)
 
         if self.options.get_safe("use_rmm"):
-            self.requires("rmm/23.06.00", transitive_headers=True)
+            self.requires("rmm/23.10.00", transitive_headers=True)
 
         modules = self._enabled_modules
         self.output.info("Enabled modules:", modules)
         if "imageproc" in modules:
             self.requires("libsgm/3.0.0@cupoch", transitive_headers=True)
         if "io" in modules:
-            self.requires("libjpeg-turbo/3.0.0")
-            self.requires("libpng/1.6.40")
+            self.requires("libjpeg-turbo/3.0.2")
+            self.requires("libpng/1.6.42")
             self.requires("rply/1.1.4")
             self.requires("tinyobjloader/2.0.0-rc10")
             self.requires("liblzf/3.6")
         if "kinematics" in modules:
-            self.requires("urdfdom/3.1.1@cupoch")
+            self.requires("urdfdom/3.1.1")
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
-            self.requires("imgui/1.89.8-docking")
+            self.requires("imgui/1.90.3-docking")
 
     def build_requirements(self):
         # For native/all/all-major CUDA architectures support
