@@ -28,19 +28,12 @@ function(get_available_cuda_architectures CUDA_ARCHITECTURES)
     set(${CUDA_ARCHITECTURES} "${ARCHITECTURES}" PARENT_SCOPE)
 endfunction()
 
-# Sets the default value of CMAKE_CUDA_ARCHITECTURES effectively to "all":
-# compile for all supported real (minor) architecture versions, and the highest virtual architecture version.
+# Set the default CUDA architecture to either "native" or the lowest common denominator supported by CUDA 12
 function(init_cmake_cuda_architectures)
-    get_available_cuda_architectures(ALL_ARCHITECTURES)
-    set(CMAKE_CUDA_ARCHITECTURES "")
-    foreach(arch ${ALL_ARCHITECTURES})
-        # Skip deprecated 3.x architectures
-        if (arch GREATER_EQUAL 50)
-            list(APPEND CMAKE_CUDA_ARCHITECTURES "${arch}-real")
-        endif()
-    endforeach()
-    list(GET ALL_ARCHITECTURES -1 latest)
-    list(APPEND CMAKE_CUDA_ARCHITECTURES "${latest}-virtual")
-    set(CMAKE_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}")
+    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
+        set(CMAKE_CUDA_ARCHITECTURES "native")
+    else()
+        set(CMAKE_CUDA_ARCHITECTURES "52")
+    endif()
     set(CMAKE_CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}" PARENT_SCOPE)
 endfunction()
