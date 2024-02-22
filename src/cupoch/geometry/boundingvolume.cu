@@ -42,7 +42,7 @@ struct check_within_oriented_bounding_box_functor {
     const std::array<Eigen::Vector3f, 8> box_points_;
     __device__ float test_plane(const Eigen::Vector3f &a,
                                 const Eigen::Vector3f &b,
-                                const Eigen::Vector3f c,
+                                const Eigen::Vector3f &c,
                                 const Eigen::Vector3f &x) const {
         Eigen::Matrix3f design;
         design << (b - a), (c - a), (x - a);
@@ -51,7 +51,7 @@ struct check_within_oriented_bounding_box_functor {
     __device__ bool operator()(
             const thrust::tuple<int, Eigen::Vector3f> &x) const {
         const Eigen::Vector3f &point = thrust::get<1>(x);
-        return (test_plane(box_points_[0], box_points_[1], box_points_[3],
+        return ((test_plane(box_points_[0], box_points_[1], box_points_[3],
                            point) <= 0 &&
                 test_plane(box_points_[0], box_points_[5], box_points_[3],
                            point) >= 0 &&
@@ -62,7 +62,19 @@ struct check_within_oriented_bounding_box_functor {
                 test_plane(box_points_[3], box_points_[4], box_points_[5],
                            point) <= 0 &&
                 test_plane(box_points_[0], box_points_[1], box_points_[7],
-                           point) >= 0);
+                           point) >= 0) ||
+                (test_plane(box_points_[0], box_points_[1], box_points_[3],
+                           point) >= 0 &&
+                test_plane(box_points_[0], box_points_[5], box_points_[3],
+                           point) <= 0 &&
+                test_plane(box_points_[2], box_points_[5], box_points_[7],
+                           point) >= 0 &&
+                test_plane(box_points_[1], box_points_[4], box_points_[7],
+                           point) <= 0 &&
+                test_plane(box_points_[3], box_points_[4], box_points_[5],
+                           point) >= 0 &&
+                test_plane(box_points_[0], box_points_[1], box_points_[7],
+                           point) <= 0));
     }
 };
 

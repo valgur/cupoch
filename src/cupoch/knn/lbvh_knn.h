@@ -19,11 +19,13 @@
  * IN THE SOFTWARE.
  **/
 #pragma once
-#include "cupoch/knn/lbvh_knn.h"
-#include <lbvh_index/aabb.cuh>
-#include <lbvh_index/lbvh.cuh>
+#include <Eigen/Core>
 
 #include "cupoch/utility/device_vector.h"
+
+namespace lbvh {
+struct BVHNode;
+}
 
 namespace cupoch {
 
@@ -33,27 +35,36 @@ class Geometry;
 
 namespace knn {
 
+using AABB = std::pair<Eigen::Vector3f, Eigen::Vector3f>;
+
+
 class LinearBoundingVolumeHierarchyKNN {
 public:
-    LinearBoundingVolumeHierarchyKNN(size_t leaf_size = 32, bool compact = true, bool sort_queries = true, bool shrink_to_fit = false);
-    LinearBoundingVolumeHierarchyKNN(const geometry::Geometry &geometry);
+    LinearBoundingVolumeHierarchyKNN(size_t leaf_size = 32, bool compact = false, bool sort_queries = false, bool shrink_to_fit = false);
+    LinearBoundingVolumeHierarchyKNN(const utility::device_vector<Eigen::Vector3f> &data, size_t leaf_size = 32, bool compact = false, bool sort_queries = false, bool shrink_to_fit = false);
     ~LinearBoundingVolumeHierarchyKNN();
     LinearBoundingVolumeHierarchyKNN(const LinearBoundingVolumeHierarchyKNN &) = delete;
     LinearBoundingVolumeHierarchyKNN &operator=(const LinearBoundingVolumeHierarchyKNN &) = delete;
 
 public:
     template <typename InputIterator, int Dim>
-    int SearchKNN(InputIterator first,
-                  InputIterator last,
-                  int knn,
-                  utility::device_vector<unsigned int> &indices,
-                  utility::device_vector<float> &distance2) const;
+    int SearchNN(InputIterator first,
+                 InputIterator last,
+                 float radius,
+                 utility::device_vector<unsigned int> &indices,
+                 utility::device_vector<float> &distance2) const;
 
     template <typename T>
-    int SearchKNN(const utility::device_vector<T> &query,
-                  int knn,
-                  utility::device_vector<unsigned int> &indices,
-                  utility::device_vector<float> &distance2) const;
+    int SearchNN(const utility::device_vector<T> &query,
+                 float radius,
+                 utility::device_vector<unsigned int> &indices,
+                 utility::device_vector<float> &distance2) const;
+
+    template <typename T>
+    int SearchNN(const T &query,
+                 float radius,
+                 thrust::host_vector<unsigned int> &indices,
+                 thrust::host_vector<float> &distance2) const;
 
     template <typename T>
     bool SetRawData(const utility::device_vector<T> &data);
@@ -67,8 +78,8 @@ private:
     bool sort_queries_;
     bool shrink_to_fit_;
 
-    lbvh::AABB extent_;
-    utility::device_vector<lbvh::BVHNode> nodes_;
+    AABB extent_;
+    std::unique_ptr<utility::device_vector<lbvh::BVHNode>> nodes_;
     utility::device_vector<float3> data_float3_;
     utility::device_vector<unsigned int> sorted_indices_;
     unsigned int root_node_index_;
@@ -77,4 +88,3 @@ private:
 }
 }
 
-#include "cupoch/knn/lbvh_knn.inl"

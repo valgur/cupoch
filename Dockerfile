@@ -1,5 +1,5 @@
 
-FROM nvidia/cuda:11.4.0-devel-ubuntu20.04
+FROM nvidia/cuda:11.7.1-devel-ubuntu20.04
 
 WORKDIR /work/cupoch
 
@@ -39,4 +39,5 @@ RUN mkdir build \
 COPY . .
 RUN cd build \
     && cmake .. -DCMAKE_BUILD_TYPE=Release \
-    && make install-pip-package
+    && make pip-package \
+    && pip install lib/python_package/pip_package/*.whl
