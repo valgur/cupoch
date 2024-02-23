@@ -31,10 +31,10 @@ RUN cd src/python \
 
 ENV PYTHONPATH $PYTHONPATH:/usr/lib/python3.8/site-packages
 
+RUN conan profile detect
 COPY conanfile.py conanfile.py
-RUN mkdir build \
-    && cd build \
-    && conan install .. -of . -c tools.system.package_manager:mode=install
+COPY third_party/conan-recipes third_party/conan-recipes
+RUN conan install . --build missing -s compiler.cppstd=17 -c tools.system.package_manager:mode=install
 
 COPY . .
 RUN cd build \
