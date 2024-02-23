@@ -14,7 +14,7 @@ required_conan_version = ">=1.53.0"
 
 class StdgpuConan(ConanFile):
     name = "stdgpu"
-    version = "cci.20230913"
+    version = "cci.20240211"
     description = "Efficient STL-like Data Structures on the GPU"
     license = "Apache-2.0"
     url = "https://github.com/conan-io/conan-center-index"

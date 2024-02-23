@@ -128,7 +128,7 @@ class CupochConan(ConanFile):
         self.requires("thrust/2.2.0@cupoch", transitive_headers=True, force=True)
         self.requires("libcudacxx/2.2.0@cupoch", override=True)
         self.requires("cub/2.2.0@cupoch", override=True)
-        self.requires("stdgpu/cci.20230913@cupoch", transitive_headers=True)
+        self.requires("stdgpu/cci.20240211@cupoch", transitive_headers=True)
         self.requires("dlpack/0.8")
         self.requires("jsoncpp/1.9.5")
         self.requires("fmt/10.2.1", override=True)

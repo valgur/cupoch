@@ -1,4 +1,7 @@
 sources:
+  "cci.20240211":
+    url: "https://github.com/stotko/stdgpu/archive/71a5aef26626eda47d15e5f577ca3b1538ff996a.zip"
+    sha256: "6fda88a3bd1a56d5e6769bc54fe6cafcb192898a5086a527970213fc1890cc73"
   "cci.20230913":
     url: "https://github.com/stotko/stdgpu/archive/b70405bc62958f1f1334a936a20cd025351816fb.zip"
     sha256: "f94c0352fdf2d2bc5490791a56cf42b562a5222e58ce5676510a07bb72ce75b6"
