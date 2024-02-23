@@ -58,16 +58,20 @@ class CubConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+
+    @property
+    def _source_subfolder(self):
         if Version(self.version) >= "2.0":
-            move_folder_contents(self, os.path.join(self.source_folder, "cub"), self.source_folder)
+            return os.path.join(self.source_folder, "cub")
+        return self.source_folder
 
     def package(self):
         copy(self, "LICENSE.TXT",
              dst=os.path.join(self.package_folder, "licenses"),
-             src=self.source_folder)
+             src=self._source_subfolder)
         copy(self, "*.cuh",
              dst=os.path.join(self.package_folder, "include", "cub"),
-             src=os.path.join(self.source_folder, "cub"))
+             src=os.path.join(self._source_subfolder, "cub"))
 
     def package_info(self):
         self.cpp_info.bindirs = []
