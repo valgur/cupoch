@@ -40,7 +40,7 @@ class CupochConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "cuda_architectures": [None, "ANY"],
+        "cuda_architectures": ["native", "all", "all-major", "ANY"],
         "use_rmm": [True, False],
     }
     options.update({module: [True, False] for module in MODULES})
@@ -58,7 +58,6 @@ class CupochConan(ConanFile):
         "fPIC": "Enable position-independent code.",
         "cuda_architectures": (
             "Sets the CUDA architectures to generate device code for via CMAKE_CUDA_ARCHITECTURES. "
-            "Generates code for all architectures if set to None."
         ),
         "use_rmm": "Use RAPIDS Memory Manager for memory management.",
     }
@@ -187,8 +186,7 @@ class CupochConan(ConanFile):
         tc.cache_variables["BUILD_EXAMPLES"] = False
         tc.cache_variables["BUILD_PYTHON_MODULE"] = False
         tc.cache_variables["USE_RMM"] = self.options.get_safe("use_rmm", False)
-        if self.options.cuda_architectures is not None:
-            tc.cache_variables["CMAKE_CUDA_ARCHITECTURES"] = self.options.cuda_architectures
+        tc.cache_variables["CMAKE_CUDA_ARCHITECTURES"] = self.options.cuda_architectures
         for module in MODULES:
             tc.cache_variables[f"BUILD_cupoch_{module}"] = module in self._enabled_modules
         tc.generate()
