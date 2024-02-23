@@ -152,7 +152,7 @@ class CupochConan(ConanFile):
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
-            self.requires("imgui/1.90.3-docking")
+            self.requires("imgui/1.90.4-docking")
 
     def build_requirements(self):
         # For native/all/all-major CUDA architectures support
