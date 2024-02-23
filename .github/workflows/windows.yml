@@ -54,8 +54,7 @@ jobs:
       with:
         cuda: '12.1.0'
         # Note: we use Thrust from Conan.
-        # 'thrust' sub-package is installed for libcu++, which is not yet available from Conan.
-        sub-packages: '["nvcc", "cudart", "cublas_dev", "nvrtc_dev", "thrust", "visual_studio_integration"]'
+        sub-packages: '["nvcc", "cudart", "cublas_dev", "nvrtc_dev", "visual_studio_integration"]'
 
     - name: nvcc check
       shell: powershell
