@@ -120,6 +120,9 @@ class CupochConan(ConanFile):
         for module in self._enabled_modules:
             setattr(self.info.options, module, True)
 
+    def layout(self):
+        cmake_layout(self)
+
     def requirements(self):
         self._export_local_recipes()
 
@@ -159,8 +162,20 @@ class CupochConan(ConanFile):
         self.tool_requires("cmake/[>=3.24]")
         self.test_requires("gtest/1.14.0")
 
-    def layout(self):
-        cmake_layout(self)
+    def _copy_imgui_backends(self):
+        # The imgui backends are not built by default and need to be copied to the source tree
+        backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
+        output_dir = self.source_path.joinpath(
+            "src", "cupoch", "visualization", "visualizer", "imgui", "backends"
+        )
+        for backend_file in [
+            "imgui_impl_glfw.h",
+            "imgui_impl_glfw.cpp",
+            "imgui_impl_opengl3.h",
+            "imgui_impl_opengl3_loader.h",
+            "imgui_impl_opengl3.cpp",
+        ]:
+            copy(self, backend_file, backends_dir, output_dir)
 
     def generate(self):
         VirtualBuildEnv(self).generate()
@@ -183,24 +198,10 @@ class CupochConan(ConanFile):
         deps.check_components_exist = True
         deps.generate()
 
-    def _copy_imgui_backends(self):
-        # The imgui backends are not built by default and need to be copied to the source tree
-        backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
-        output_dir = self.source_path.joinpath(
-            "src", "cupoch", "visualization", "visualizer", "imgui", "backends"
-        )
-        for backend_file in [
-            "imgui_impl_glfw.h",
-            "imgui_impl_glfw.cpp",
-            "imgui_impl_opengl3.h",
-            "imgui_impl_opengl3_loader.h",
-            "imgui_impl_opengl3.cpp",
-        ]:
-            copy(self, backend_file, backends_dir, output_dir)
-
-    def build(self):
         if "visualization" in self._enabled_modules:
             self._copy_imgui_backends()
+
+    def build(self):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
