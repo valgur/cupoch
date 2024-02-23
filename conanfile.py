@@ -3,6 +3,7 @@ from pathlib import Path
 
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.env import VirtualBuildEnv
 from conan.tools.files import copy, rm
 
 required_conan_version = ">=1.53.0"
@@ -162,6 +163,8 @@ class CupochConan(ConanFile):
         cmake_layout(self)
 
     def generate(self):
+        VirtualBuildEnv(self).generate()
+
         tc = CMakeToolchain(self)
         # Do not set CXX, C flags from Conan to avoid adding -stdlib=libstdc++
         tc.blocks.remove("cmake_flags_init")
@@ -183,7 +186,9 @@ class CupochConan(ConanFile):
     def _copy_imgui_backends(self):
         # The imgui backends are not built by default and need to be copied to the source tree
         backends_dir = Path(self.dependencies["imgui"].package_folder) / "res" / "bindings"
-        output_dir = self.source_path / "src/cupoch/visualization/visualizer/imgui/backends"
+        output_dir = self.source_path.joinpath(
+            "src", "cupoch", "visualization", "visualizer", "imgui", "backends"
+        )
         for backend_file in [
             "imgui_impl_glfw.h",
             "imgui_impl_glfw.cpp",
