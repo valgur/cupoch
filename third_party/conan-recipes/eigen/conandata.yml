@@ -5,3 +5,6 @@ sources:
   "3.4.90-20230718":
     url: "https://gitlab.com/libeigen/eigen/-/archive/6e7abeae69eafe8d36043ece26a8796ca168fd21/eigen-6e7abeae69eafe8d36043ece26a8796ca168fd21.tar.bz2"
     sha256: "b0471aa7fb6a24021af9e1edd0f86c77eb3af4a5d42cdee2ecf45481f182b634"
+  "3.4.0-20230718":
+    url: "https://gitlab.com/libeigen/eigen/-/archive/e7248b26a1ed53fa030c5c459f7ea095dfd276ac/eigen-e7248b26a1ed53fa030c5c459f7ea095dfd276ac.tar.bz2"
+    sha256: "a3f1724de1dc7e7f74fbcc206ffcaeba27fd89b37dc71f9c31e505634d0c1634"

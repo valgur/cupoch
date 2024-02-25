@@ -126,23 +126,23 @@ class CupochConan(ConanFile):
         self._export_local_recipes()
 
         # Used by all modules via cupoch_utility
-        self.requires("eigen/3.4.90-20230718@cupoch", transitive_headers=True)
-        self.requires("spdlog/1.13.0", transitive_headers=True, force=True)
-        self.requires("thrust/2.2.0@cupoch", transitive_headers=True, force=True)
+        self.requires("eigen/3.4.0-20230718@cupoch", transitive_headers=True, transitive_libs=True)
+        self.requires("spdlog/1.13.0", transitive_headers=True, transitive_libs=True, force=True)
+        self.requires("thrust/2.2.0@cupoch", transitive_headers=True, transitive_libs=True, force=True)
         self.requires("libcudacxx/2.2.0@cupoch", override=True)
         self.requires("cub/2.2.0@cupoch", override=True)
-        self.requires("stdgpu/cci.20240211@cupoch", transitive_headers=True)
+        self.requires("stdgpu/cci.20240211@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.8")
         self.requires("jsoncpp/1.9.5")
         self.requires("fmt/10.2.1", override=True)
 
         if self.options.get_safe("use_rmm"):
-            self.requires("rmm/23.10.00", transitive_headers=True)
+            self.requires("rmm/23.10.00", transitive_headers=True, transitive_libs=True)
 
         modules = self._enabled_modules
         self.output.info("Enabled modules:", modules)
         if "imageproc" in modules:
-            self.requires("libsgm/3.0.0@cupoch", transitive_headers=True)
+            self.requires("libsgm/3.0.0@cupoch", transitive_headers=True, transitive_libs=True)
         if "io" in modules:
             self.requires("libjpeg-turbo/3.0.2")
             self.requires("libpng/1.6.42")
