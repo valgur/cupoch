@@ -1,0 +1,108 @@
+{
+  "name": "cupoch",
+  "version-string": "0.2.10.0",
+  "description": "Rapid 3D data processing for robotics using CUDA.",
+  "homepage": "https://github.com/neka-nat/cupoch",
+  "license": "MIT",
+  "supports": "linux & windows",
+  "builtin-baseline": "f37bb26d69b8accc30946a3fa9c94c1931b9c301",
+  "dependencies": [
+    "cuda",
+    "dlpack",
+    "eigen3",
+    "fmt",
+    "jsoncpp",
+    "spdlog",
+    "stdgpu",
+    "thrust",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ],
+  "default-features": [
+    "camera",
+    "collision",
+    "geometry",
+    "imageproc",
+    "integration",
+    "io",
+    "kinematics",
+    "kinfu",
+    "knn",
+    "odometry",
+    "planning",
+    "registration",
+    "rmm",
+    "visualization"
+  ],
+  "features": {
+    "camera": {
+      "description": "Enable camera module"
+    },
+    "collision": {
+      "description": "Enable collision module"
+    },
+    "geometry": {
+      "description": "Enable geometry module"
+    },
+    "imageproc": {
+      "description": "Enable image processing module",
+      "dependencies": [
+        "libsgm"
+      ]
+    },
+    "integration": {
+      "description": "Enable integration module"
+    },
+    "io": {
+      "description": "Enable io module",
+      "dependencies": [
+        "libjpeg-turbo",
+        "liblzf",
+        "libpng",
+        "rply",
+        "tinyobjloader"
+      ]
+    },
+    "kinematics": {
+      "description": "Enable kinematics module",
+      "dependencies": [
+        "urdfdom"
+      ]
+    },
+    "kinfu": {
+      "description": "Enable kinfu module"
+    },
+    "knn": {
+      "description": "Enable knn module"
+    },
+    "odometry": {
+      "description": "Enable odometry module"
+    },
+    "planning": {
+      "description": "Enable planning module"
+    },
+    "registration": {
+      "description": "Enable registration module"
+    },
+    "rmm": {
+      "description": "Use RAPIDS Memory Manager for memory management.",
+      "dependencies": [
+        "rmm"
+      ]
+    },
+    "visualization": {
+      "description": "Enable visualization module",
+      "dependencies": [
+        "glew",
+        "glfw3",
+        "imgui"
+      ]
+    }
+  }
+}
