@@ -10,7 +10,7 @@ required_conan_version = ">=1.52.0"
 
 class ThrustConan(ConanFile):
     name = "thrust"
-    version = "2.2.0"
+    version = "2.3.0"
     license = "Apache-2.0"
     description = (
         "Thrust is a parallel algorithms library which resembles "

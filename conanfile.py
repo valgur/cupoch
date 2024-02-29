@@ -128,9 +128,9 @@ class CupochConan(ConanFile):
         # Used by all modules via cupoch_utility
         self.requires("eigen/3.4.0-20230718@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("spdlog/1.13.0", transitive_headers=True, transitive_libs=True, force=True)
-        self.requires("thrust/2.2.0@cupoch", transitive_headers=True, transitive_libs=True, force=True)
-        self.requires("libcudacxx/2.2.0@cupoch", override=True)
-        self.requires("cub/2.2.0@cupoch", override=True)
+        self.requires("thrust/2.3.0@cupoch", transitive_headers=True, transitive_libs=True, force=True)
+        self.requires("libcudacxx/2.3.0@cupoch", override=True)
+        self.requires("cub/2.3.0@cupoch", override=True)
         self.requires("stdgpu/cci.20240211@cupoch", transitive_headers=True, transitive_libs=True)
         self.requires("dlpack/0.8")
         self.requires("jsoncpp/1.9.5")

@@ -12,7 +12,7 @@ required_conan_version = ">=1.52.0"
 
 class CubConan(ConanFile):
     name = "cub"
-    version = "2.2.0"
+    version = "2.3.0"
     description = "Cooperative primitives for CUDA C++"
     license = "BSD 3-Clause"
     url = "https://github.com/conan-io/conan-center-index"
