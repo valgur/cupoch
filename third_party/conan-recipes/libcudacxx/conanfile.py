@@ -12,7 +12,7 @@ required_conan_version = ">=1.52.0"
 
 class LibcudacxxConan(ConanFile):
     name = "libcudacxx"
-    version = "2.3.0"
+    version = "2.2.0"
     description = ("libcu++, the NVIDIA C++ Standard Library, is the C++ Standard Library for your entire system."
                    " It provides a heterogeneous implementation of the C++ Standard Library that can be used in and between CPU and GPU code.")
     license = "Apache-2.0"
