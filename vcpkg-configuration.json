@@ -1,5 +1,5 @@
 {
   "overlay-ports": [
-    "ports"
+    "third_party/vcpkg-ports"
   ]
 }
