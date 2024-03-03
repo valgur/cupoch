@@ -1,0 +1,7 @@
+Thrust is header-only and can be used from CMake via
+    find_package(Thrust REQUIRED CONFIG)
+    thrust_create_target(Thrust [options])
+    target_link_libraries(main PRIVATE Thrust)
+
+For details about thrust_create_target() see:
+https://github.com/NVIDIA/thrust/blob/main/thrust/cmake/README.md#user-guide

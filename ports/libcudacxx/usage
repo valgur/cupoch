@@ -1,0 +1,4 @@
+libcudacxx is header-only and can be used from CMake via:
+
+    find_package(libcudacxx CONFIG REQUIRED)
+    target_include_directories(main PRIVATE libcudacxx::libcudacxx)

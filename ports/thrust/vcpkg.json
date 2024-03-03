@@ -1,0 +1,19 @@
+{
+  "name": "thrust",
+  "version": "2.3.0",
+  "description": "Thrust: The C++ Parallel Algorithms Library",
+  "homepage": "https://nvidia.github.io/cccl/thrust",
+  "license": "Apache-2.0 WITH LLVM-exception AND BSL-1.0 AND BSD-2-Clause",
+  "dependencies": [
+    "cub",
+    "libcudacxx",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
