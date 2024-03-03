@@ -1,0 +1,17 @@
+--- src/thrust/cmake/ThrustInstallRules.cmake
++++ src/thrust/cmake/ThrustInstallRules.cmake
+@@ -12,12 +12,12 @@
+ )
+ 
+ install(DIRECTORY "${Thrust_SOURCE_DIR}/thrust/cmake/"
+-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/thrust"
++  DESTINATION "share/thrust"
+   REGEX .*header-search.cmake.* EXCLUDE
+ )
+ # Need to configure a file to store the infix specified in
+ # CMAKE_INSTALL_INCLUDEDIR since it can be defined by the user
+-set(install_location "${CMAKE_INSTALL_LIBDIR}/cmake/thrust")
++set(install_location "share/thrust")
+ configure_file("${Thrust_SOURCE_DIR}/thrust/cmake/thrust-header-search.cmake.in"
+   "${Thrust_BINARY_DIR}/thrust/cmake/thrust-header-search.cmake"
+   @ONLY)

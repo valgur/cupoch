@@ -1,0 +1,19 @@
+--- src/libcudacxx/cmake/libcudacxxInstallRules.cmake
++++ src/libcudacxx/cmake/libcudacxxInstallRules.cmake
+@@ -21,14 +21,14 @@
+ 
+ # Libcudacxx cmake package
+ install(DIRECTORY "${libcudacxx_SOURCE_DIR}/lib/cmake/libcudacxx"
+-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake"
++  DESTINATION "share"
+   REGEX .*header-search.cmake.* EXCLUDE
+ )
+ 
+ # Need to configure a file to store CMAKE_INSTALL_INCLUDEDIR
+ # since it can be defined by the user. This is common to work around collisions
+ # with the CTK installed headers.
+-set(install_location "${CMAKE_INSTALL_LIBDIR}/cmake/libcudacxx")
++set(install_location "share/libcudacxx")
+ # Transform to a list of directories, replace each directory with "../"
+ # and convert back to a string
+ string(REGEX REPLACE "/" ";" from_install_prefix "${install_location}")
