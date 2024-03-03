@@ -1,0 +1,5 @@
+The package libsgm provides CMake variables:
+
+    find_package(LibSGM MODULE REQUIRED)
+    target_include_directories(main PRIVATE ${LIBSGM_INCLUDE_DIRS})
+    target_link_libraries(main PRIVATE ${LIBSGM_LIBRARY})
