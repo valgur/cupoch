@@ -1,0 +1,20 @@
+{
+  "name": "rmm",
+  "version": "24.2.0",
+  "description": "RMM: RAPIDS Memory Manager",
+  "homepage": "https://github.com/rapidsai/rmm",
+  "dependencies": [
+    "cccl",
+    "cuda",
+    "fmt",
+    "spdlog",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

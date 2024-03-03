@@ -1,0 +1,4 @@
+RMM provides a CMake target:
+
+    find_package(RMM CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE rmm::rmm)

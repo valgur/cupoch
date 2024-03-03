@@ -1,0 +1,18 @@
+--- src/CMakeLists.txt
++++ src/CMakeLists.txt
+@@ -65,12 +65,9 @@
+ # ##################################################################################################
+ # * dependencies -----------------------------------------------------------------------------------
+ 
+-# add third party dependencies using CPM
+-rapids_cpm_init()
+-
+-include(cmake/thirdparty/get_fmt.cmake)
+-include(cmake/thirdparty/get_spdlog.cmake)
+-include(cmake/thirdparty/get_cccl.cmake)
++find_package(fmt CONFIG REQUIRED)
++find_package(spdlog CONFIG REQUIRED)
++find_package(CCCL CONFIG REQUIRED)
+ 
+ # ##################################################################################################
+ # * library targets --------------------------------------------------------------------------------
