@@ -1,0 +1,4 @@
+CCCL provides a CMake target:
+
+    find_package(CCCL CONFIG REQUIRED)
+    target_include_directories(main PRIVATE CCCL::CCCL)

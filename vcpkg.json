@@ -7,6 +7,7 @@
   "supports": "linux & windows",
   "builtin-baseline": "f37bb26d69b8accc30946a3fa9c94c1931b9c301",
   "dependencies": [
+    "cccl",
     "cuda",
     "dlpack",
     "eigen3",
@@ -14,7 +15,6 @@
     "jsoncpp",
     "spdlog",
     "stdgpu",
-    "thrust",
     {
       "name": "vcpkg-cmake",
       "host": true
