@@ -1,0 +1,19 @@
+{
+  "name": "stdgpu",
+  "version-date": "2024-02-11",
+  "description": "Efficient STL-like Data Structures on the GPU",
+  "homepage": "https://stotko.github.io/stdgpu/",
+  "license": "Apache-2.0",
+  "dependencies": [
+    "cuda",
+    "thrust",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
