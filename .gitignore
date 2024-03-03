@@ -9,3 +9,4 @@ site/*
 __pycache__
 .idea/
 CMakeUserPresets.json
+vcpkg_installed/
