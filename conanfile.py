@@ -146,7 +146,7 @@ class CupochConan(ConanFile):
         if "io" in modules:
             self.requires("libjpeg-turbo/3.0.2")
             self.requires("libpng/1.6.42")
-            self.requires("rply/1.1.4")
+            self.requires("rply/1.1.4@cupoch")
             self.requires("tinyobjloader/2.0.0-rc10")
             self.requires("liblzf/3.6")
         if "kinematics" in modules:
