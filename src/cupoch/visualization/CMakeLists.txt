@@ -52,6 +52,7 @@ target_link_libraries(cupoch_visualization
         imgui::imgui
 )
 
-if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends)
-    target_include_directories(cupoch_visualization PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends)
+# For imgui from Conan
+if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/visualizer/imgui/backends)
+    target_include_directories(cupoch_visualization PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/visualizer/imgui/backends)
 endif()
