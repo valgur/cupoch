@@ -150,7 +150,7 @@ class CupochConan(ConanFile):
             self.requires("tinyobjloader/2.0.0-rc10")
             self.requires("liblzf/3.6")
         if "kinematics" in modules:
-            self.requires("urdfdom/4.0.0")
+            self.requires("urdfdom/4.0.0@cupoch")
         if "visualization" in modules:
             self.requires("glew/2.2.0")
             self.requires("glfw/3.3.8")
