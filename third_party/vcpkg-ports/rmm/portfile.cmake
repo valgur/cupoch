@@ -20,4 +20,9 @@ vcpkg_cmake_install()
 vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/rmm)
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
 
+vcpkg_apply_patches(
+    SOURCE_PATH "${CURRENT_PACKAGES_DIR}/share/rmm"
+    PATCHES 002-config-deps.patch
+)
+
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")

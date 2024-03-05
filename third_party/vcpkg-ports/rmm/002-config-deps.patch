@@ -1,0 +1,12 @@
+--- rmm-dependencies.cmake
++++ rmm-dependencies.cmake
+@@ -17,6 +17,9 @@
+ include(CMakeFindDependencyMacro)
+ 
+ find_dependency(CUDAToolkit)
++find_dependency(fmt CONFIG REQUIRED)
++find_dependency(spdlog CONFIG REQUIRED)
++find_dependency(CCCL CONFIG REQUIRED)
+ 
+ 
+ set(rapids_global_targets )
