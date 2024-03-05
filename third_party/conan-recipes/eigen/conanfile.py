@@ -8,7 +8,7 @@ required_conan_version = ">=1.52.0"
 
 class EigenConan(ConanFile):
     name = "eigen"
-    version = "3.4.0-20230718"
+    version = "3.4.0-20220520"
     url = "https://github.com/conan-io/conan-center-index"
     homepage = "http://eigen.tuxfamily.org"
     description = "Eigen is a C++ template library for linear algebra: matrices, vectors," \
