@@ -16,7 +16,7 @@ target_include_directories(liblzf INTERFACE $<INSTALL_INTERFACE:include>)
 
 include(GNUInstallDirs)
 install(TARGETS liblzf
-    EXPORT unofficial-liblzf-targets
+    EXPORT liblzf-targets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -26,18 +26,18 @@ install(FILES lzf.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 ## Write config ##
 
 set(LIBLZF_SHARE_DIR share/liblzf)
-install(EXPORT unofficial-liblzf-targets
-    FILE unofficial-liblzf-config.cmake
-    NAMESPACE unofficial::liblzf::
+install(EXPORT liblzf-targets
+    FILE liblzf-config.cmake
+    NAMESPACE liblzf::
     DESTINATION ${LIBLZF_SHARE_DIR}
 )
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/unofficial-liblzf-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/liblzf-config-version.cmake"
     VERSION ${VERSION}
     COMPATIBILITY SameMajorVersion
 )
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/unofficial-liblzf-config-version.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/liblzf-config-version.cmake"
     DESTINATION ${LIBLZF_SHARE_DIR}
 )
