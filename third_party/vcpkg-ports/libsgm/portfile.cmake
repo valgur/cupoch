@@ -12,6 +12,7 @@ vcpkg_configure_cmake(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DLIBSGM_SHARED=${BUILD_SHARED}
+        -DCMAKE_POSITION_INDEPENDENT_CODE=TRUE
 )
 
 vcpkg_cmake_install()
