@@ -1,6 +1,6 @@
 --- src/src/stdgpu/CMakeLists.txt
 +++ src/src/stdgpu/CMakeLists.txt
-@@ -4,10 +4,12 @@
+@@ -4,10 +4,14 @@
  set(STDGPU_BUILD_CMAKE_DIR "${CMAKE_CURRENT_BINARY_DIR}/cmake")
  
  # Setup dependencies
@@ -10,12 +10,14 @@
  
  set(STDGPU_DEPENDENCIES_INIT "
 -find_dependency(thrust 1.9.9 REQUIRED MODULE)
-+find_package(Thrust 2.0 REQUIRED CONFIG)
-+thrust_create_target(thrust::thrust)
++if(NOT TARGET thrust::thrust)
++    find_package(Thrust 2.0 REQUIRED CONFIG)
++    thrust_create_target(thrust::thrust)
++endif()
  ")
  
  
-@@ -181,10 +183,6 @@
+@@ -181,10 +185,6 @@
          DESTINATION "${STDGPU_CMAKE_INSTALL_DIR}"
          COMPONENT stdgpu)
  
