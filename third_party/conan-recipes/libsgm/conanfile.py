@@ -10,7 +10,7 @@ required_conan_version = ">=1.53.0"
 
 class LibSGMConan(ConanFile):
     name = "libsgm"
-    version = "3.0.0"
+    version = "3.1.0"
     description = "Stereo Semi-Global Matching with CUDA"
     license = "Apache-2.0"
     url = ""
