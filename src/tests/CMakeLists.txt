@@ -30,4 +30,4 @@ TEST(registration geometry)
 
 add_executable(unittests ${UNIT_TEST_SOURCES})
 add_definitions(-DTEST_DATA_DIR="${PROJECT_SOURCE_DIR}/examples/testdata")
-target_link_libraries(unittests PRIVATE ${DEPENDENCIES} GTest::GTest GTest::Main)
+target_link_libraries(unittests PRIVATE ${DEPENDENCIES} GTest::gtest GTest::gtest_main)

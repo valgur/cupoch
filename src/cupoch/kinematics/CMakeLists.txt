@@ -16,7 +16,7 @@ target_link_libraries(cupoch_kinematics
     PUBLIC
         cupoch::collision
         cupoch::flags
-        urdfdom::urdfdom
+        urdfdom::urdf_parser
     PRIVATE
         cupoch::geometry
         cupoch::io

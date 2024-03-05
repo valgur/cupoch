@@ -55,16 +55,9 @@ option(BUILD_cupoch_planning      "Include cupoch_planning module in the build" 
 option(BUILD_cupoch_registration  "Include cupoch_registration module in the build"  ON)
 option(BUILD_cupoch_visualization "Include cupoch_visualization module in the build" ON)
 
-## conan libraries ##
-include(conan_dependencies)
+## Thrid-party dependencies ##
 set(CMAKE_CXX_STANDARD 17) # for the autodetected Conan profile
-if(NOT BUILD_TRIGGERED_BY_CONAN)
-    conan_dependencies_file(${CMAKE_SOURCE_DIR}/conanfile.py)
-    if(BUILD_PYTHON_MODULE)
-        conan_dependencies(pybind11/2.10.4)
-    endif()
-endif()
-list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/third_party")
+include(third_party)
 
 include(GNUInstallDirs)
 if(UNIX)

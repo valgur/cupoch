@@ -3,9 +3,9 @@ if(NOT BUILD_cupoch_io)
 endif()
 set(CUPOCH_MODULES ${CUPOCH_MODULES} cupoch_io PARENT_SCOPE)
 
-find_package(libjpeg-turbo REQUIRED CONFIG)
+find_package(JPEG REQUIRED)
 find_package(liblzf REQUIRED CONFIG)
-find_package(PNG REQUIRED CONFIG)
+find_package(PNG REQUIRED)
 find_package(rply REQUIRED CONFIG)
 find_package(tinyobjloader REQUIRED CONFIG)
 
@@ -27,5 +27,5 @@ target_link_libraries(cupoch_io
         PNG::PNG
         rply::rply
         tinyobjloader::tinyobjloader
-        libjpeg-turbo::libjpeg-turbo
+        JPEG::JPEG
 )

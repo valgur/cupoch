@@ -1,12 +1,5 @@
 include(${CMAKE_CURRENT_LIST_DIR}/conan.cmake)
 
-string(FIND "${CMAKE_TOOLCHAIN_FILE}" "conan_toolchain.cmake" FOUND_CONAN_TOOLCHAIN)
-if(FOUND_CONAN_TOOLCHAIN GREATER_EQUAL 0)
-    set(BUILD_TRIGGERED_BY_CONAN TRUE)
-else()
-    set(BUILD_TRIGGERED_BY_CONAN FALSE)
-endif()
-
 macro(conan_dependencies)
     if(${ARGC} LESS 1)
         message(WARNING "No packages passed to conan_dependencies")

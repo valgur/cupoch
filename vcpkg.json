@@ -13,6 +13,7 @@
     "eigen3",
     "fmt",
     "jsoncpp",
+    "pybind11",
     "spdlog",
     "stdgpu",
     {
@@ -101,7 +102,13 @@
       "dependencies": [
         "glew",
         "glfw3",
-        "imgui"
+        {
+          "name": "imgui",
+          "features": [
+            "glfw-binding",
+            "opengl3-binding"
+          ]
+        }
       ]
     }
   }

@@ -51,3 +51,7 @@ target_link_libraries(cupoch_visualization
         cupoch::io
         imgui::imgui
 )
+
+if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends)
+    target_include_directories(cupoch_visualization PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends)
+endif()
